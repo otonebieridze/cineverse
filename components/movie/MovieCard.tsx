@@ -1,9 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Movie } from "@/types/movie";
 
 export default function MovieCard({ movie }: { movie: Movie }) {
   return (
-    <div className="overflow-hidden rounded-lg bg-surface">
+    <Link
+      href={`/movies/${movie.id}`}
+      className="overflow-hidden rounded-lg bg-surface transition-opacity hover:opacity-80"
+    >
       <div className="relative aspect-2/3 w-full bg-white/5">
         {movie.posterUrl ? (
           <Image
@@ -25,6 +29,6 @@ export default function MovieCard({ movie }: { movie: Movie }) {
           <span className="text-accent">★ {movie.rating.toFixed(1)}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
