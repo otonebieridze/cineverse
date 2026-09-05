@@ -7,3 +7,7 @@ export const sampleMovies: Movie[] = [
   { id: "3", title: "Silent Frequency", releaseYear: 2024, rating: 8.6 },
   { id: "4", title: "Echoes of Tomorrow", releaseYear: 2022, rating: 7.9 },
 ];
+
+export function getMovieById(id: string): Movie | undefined {
+  return sampleMovies.find((movie) => movie.id === id);
+}
