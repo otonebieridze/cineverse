@@ -25,7 +25,7 @@ Run `npm run lint && npm run build` before considering any code change done.
 
 Speed is a core requirement, not a later optimization.
 
-- Cache TMDB requests with `fetch` revalidation (`next: { revalidate }`), and choose the interval per endpoint.
+- Cache TMDB requests with `"use cache"` + `cacheLife` (Cache Components is enabled), and choose the profile per endpoint.
 - Fetch independent data in parallel with `Promise.all`. Avoid request waterfalls.
 - Give every data-driven route a `loading.tsx` and use `<Suspense>` so the UI appears immediately and data streams in.
 - Navigate with `next/link` only (never plain `<a>` or `router.push` for internal links) so prefetching works.
