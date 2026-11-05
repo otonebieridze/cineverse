@@ -51,6 +51,12 @@ export async function getTrendingMovies(): Promise<PaginatedResponse<Movie>> {
   return tmdbFetch("/trending/movie/week");
 }
 
+export async function searchMovies(query: string): Promise<PaginatedResponse<Movie>> {
+  "use cache";
+  cacheLife("hours");
+  return tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false`);
+}
+
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {
   "use cache";
   cacheLife("days");
