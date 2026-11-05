@@ -15,7 +15,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 ## Features
 
 - [x] Popular and trending movies
-- [ ] Movie details page
+- [x] Movie details page
 - [ ] Search with debounced input
 - [ ] Genre filtering and pagination
 - [ ] Favorites (persisted in localStorage)

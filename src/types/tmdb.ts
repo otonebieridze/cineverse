@@ -8,6 +8,17 @@ export type Movie = {
   vote_average: number;
 };
 
+export type Genre = {
+  id: number;
+  name: string;
+};
+
+export type MovieDetails = Movie & {
+  runtime: number | null;
+  tagline: string | null;
+  genres: Genre[];
+};
+
 export type PaginatedResponse<T> = {
   page: number;
   results: T[];
