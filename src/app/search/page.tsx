@@ -21,7 +21,7 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
 
           return (
             <>
-              <SearchForm defaultValue={query} />
+              <SearchForm query={query} />
               {query ? (
                 <MovieSection id="search-results" title={`Results for "${query}"`}>
                   <Suspense key={query} fallback={<MovieGridSkeleton />}>
@@ -29,7 +29,7 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
                   </Suspense>
                 </MovieSection>
               ) : (
-                <p className="text-muted">Enter a movie title and press Search.</p>
+                <p className="text-muted">Start typing to search for a movie.</p>
               )}
             </>
           );
