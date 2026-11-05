@@ -1,6 +1,11 @@
 import "server-only";
 import { cacheLife } from "next/cache";
-import type { Movie, MovieDetails, PaginatedResponse } from "@/types/tmdb";
+import type {
+  GenreListResponse,
+  Movie,
+  MovieDetails,
+  PaginatedResponse,
+} from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
@@ -49,6 +54,22 @@ export async function getTrendingMovies(): Promise<PaginatedResponse<Movie>> {
   "use cache";
   cacheLife("hours");
   return tmdbFetch("/trending/movie/week");
+}
+
+export async function getMovieGenres(): Promise<GenreListResponse> {
+  "use cache";
+  cacheLife("weeks");
+  return tmdbFetch("/genre/movie/list");
+}
+
+export async function discoverMovies(genreId?: number): Promise<PaginatedResponse<Movie>> {
+  "use cache";
+  cacheLife("hours");
+  const params = new URLSearchParams({ sort_by: "popularity.desc", include_adult: "false" });
+  if (genreId !== undefined) {
+    params.set("with_genres", String(genreId));
+  }
+  return tmdbFetch(`/discover/movie?${params}`);
 }
 
 export async function searchMovies(query: string): Promise<PaginatedResponse<Movie>> {

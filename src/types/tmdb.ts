@@ -13,6 +13,10 @@ export type Genre = {
   name: string;
 };
 
+export type GenreListResponse = {
+  genres: Genre[];
+};
+
 export type MovieDetails = Movie & {
   runtime: number | null;
   tagline: string | null;
