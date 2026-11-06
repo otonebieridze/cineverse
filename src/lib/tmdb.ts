@@ -1,6 +1,11 @@
 import "server-only";
 import { cacheLife } from "next/cache";
-import type { Movie, MovieDetails, PaginatedResponse } from "@/types/tmdb";
+import type {
+  GenreListResponse,
+  Movie,
+  MovieDetails,
+  PaginatedResponse,
+} from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
@@ -51,10 +56,37 @@ export async function getTrendingMovies(): Promise<PaginatedResponse<Movie>> {
   return tmdbFetch("/trending/movie/week");
 }
 
-export async function searchMovies(query: string): Promise<PaginatedResponse<Movie>> {
+export async function getMovieGenres(): Promise<GenreListResponse> {
+  "use cache";
+  cacheLife("weeks");
+  return tmdbFetch("/genre/movie/list");
+}
+
+export async function discoverMovies(
+  genreId: number | undefined,
+  page: number,
+): Promise<PaginatedResponse<Movie>> {
   "use cache";
   cacheLife("hours");
-  return tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false`);
+  const params = new URLSearchParams({
+    sort_by: "popularity.desc",
+    include_adult: "false",
+    page: String(page),
+  });
+  if (genreId !== undefined) {
+    params.set("with_genres", String(genreId));
+  }
+  return tmdbFetch(`/discover/movie?${params}`);
+}
+
+export async function searchMovies(
+  query: string,
+  page: number,
+): Promise<PaginatedResponse<Movie>> {
+  "use cache";
+  cacheLife("hours");
+  const params = new URLSearchParams({ query, include_adult: "false", page: String(page) });
+  return tmdbFetch(`/search/movie?${params}`);
 }
 
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {
