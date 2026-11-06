@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { getImageUrl } from "@/lib/tmdb";
+import { toFavoriteMovie } from "@/stores/useFavoritesStore";
 import type { Movie } from "@/types/tmdb";
 
 type MovieCardProps = {
@@ -32,6 +34,9 @@ export function MovieCard({ movie, loading, fetchPriority }: MovieCardProps) {
             No poster available
           </div>
         )}
+        <div className="absolute top-2 right-2 z-10">
+          <FavoriteButton movie={toFavoriteMovie(movie)} variant="icon" />
+        </div>
       </div>
       <h3 className="mt-3 line-clamp-2 font-semibold leading-snug transition-colors group-hover:text-accent">
         <Link

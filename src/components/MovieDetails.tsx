@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Container } from "@/components/Container";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { getImageUrl } from "@/lib/tmdb";
+import { toFavoriteMovie } from "@/stores/useFavoritesStore";
 import type { MovieDetails as MovieDetailsData } from "@/types/tmdb";
 
 type MovieDetailsProps = {
@@ -70,6 +72,10 @@ export function MovieDetails({ movie }: MovieDetailsProps) {
               </span>
             )}
           </p>
+
+          <div className="mt-6">
+            <FavoriteButton movie={toFavoriteMovie(movie)} variant="labeled" />
+          </div>
 
           {movie.genres.length > 0 && (
             <ul className="mt-6 flex flex-wrap gap-2" aria-label="Genres">
