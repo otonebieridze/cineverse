@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/images";
 import { toFavoriteMovie } from "@/stores/useFavoritesStore";
 import type { Movie } from "@/types/tmdb";
 
