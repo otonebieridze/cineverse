@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 const NAV_LINKS = [
   { href: "/movies", label: "Browse" },
   { href: "/search", label: "Search" },
+  { href: "/favorites", label: "Favorites" },
 ];
 
 export function SiteHeader() {

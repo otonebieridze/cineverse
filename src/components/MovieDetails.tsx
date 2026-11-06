@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/Container";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { getImageUrl } from "@/lib/images";
-import { toFavoriteMovie } from "@/stores/useFavoritesStore";
+import { toMovieSummary } from "@/lib/movies";
 import type { MovieDetails as MovieDetailsData } from "@/types/tmdb";
 
 type MovieDetailsProps = {
@@ -74,7 +74,7 @@ export function MovieDetails({ movie }: MovieDetailsProps) {
           </p>
 
           <div className="mt-6">
-            <FavoriteButton movie={toFavoriteMovie(movie)} variant="labeled" />
+            <FavoriteButton movie={toMovieSummary(movie)} variant="labeled" />
           </div>
 
           {movie.genres.length > 0 && (

@@ -2,14 +2,11 @@
 
 import { Button } from "@/components/Button";
 import { HeartIcon } from "@/components/HeartIcon";
-import {
-  type FavoriteMovie,
-  useFavoritesStore,
-  useIsFavorite,
-} from "@/stores/useFavoritesStore";
+import { useFavoritesStore, useIsFavorite } from "@/stores/useFavoritesStore";
+import type { MovieSummary } from "@/types/tmdb";
 
 type FavoriteButtonProps = {
-  movie: FavoriteMovie;
+  movie: MovieSummary;
   variant: "icon" | "labeled";
 };
 

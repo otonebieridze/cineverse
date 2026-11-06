@@ -1,15 +1,11 @@
+import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Movie } from "@/types/tmdb";
-
-export type FavoriteMovie = Pick<
-  Movie,
-  "id" | "title" | "poster_path" | "release_date" | "vote_average"
->;
+import type { MovieSummary } from "@/types/tmdb";
 
 type FavoritesState = {
-  favorites: FavoriteMovie[];
-  toggleFavorite: (movie: FavoriteMovie) => void;
+  favorites: MovieSummary[];
+  toggleFavorite: (movie: MovieSummary) => void;
 };
 
 export const useFavoritesStore = create<FavoritesState>()(
@@ -31,16 +27,18 @@ export const useFavoritesStore = create<FavoritesState>()(
   ),
 );
 
-export function toFavoriteMovie({
-  id,
-  title,
-  poster_path,
-  release_date,
-  vote_average,
-}: FavoriteMovie): FavoriteMovie {
-  return { id, title, poster_path, release_date, vote_average };
-}
-
 export function useIsFavorite(id: number): boolean {
   return useFavoritesStore(({ favorites }) => favorites.some((movie) => movie.id === id));
+}
+
+function subscribeToHydration(onChange: () => void) {
+  return useFavoritesStore.persist.onFinishHydration(onChange);
+}
+
+function getHasHydrated() {
+  return useFavoritesStore.persist.hasHydrated();
+}
+
+export function useFavoritesHydrated(): boolean {
+  return useSyncExternalStore(subscribeToHydration, getHasHydrated, () => false);
 }
