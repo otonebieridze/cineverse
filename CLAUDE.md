@@ -58,6 +58,7 @@ src/
   app/          routes, layouts, loading/error boundaries
   components/   reusable UI components
   lib/          TMDB client, utilities
+  stores/       Zustand stores (client state)
   types/        shared TypeScript types
 ```
 

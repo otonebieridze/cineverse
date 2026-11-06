@@ -8,6 +8,11 @@ export type Movie = {
   vote_average: number;
 };
 
+export type MovieSummary = Pick<
+  Movie,
+  "id" | "title" | "poster_path" | "release_date" | "vote_average"
+>;
+
 export type Genre = {
   id: number;
   name: string;

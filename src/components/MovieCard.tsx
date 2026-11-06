@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl } from "@/lib/tmdb";
-import type { Movie } from "@/types/tmdb";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { getImageUrl } from "@/lib/images";
+import { toMovieSummary } from "@/lib/movies";
+import type { MovieSummary } from "@/types/tmdb";
 
 type MovieCardProps = {
-  movie: Movie;
+  movie: MovieSummary;
   loading?: "eager" | "lazy";
   fetchPriority?: "high" | "auto";
 };
@@ -32,6 +34,9 @@ export function MovieCard({ movie, loading, fetchPriority }: MovieCardProps) {
             No poster available
           </div>
         )}
+        <div className="absolute top-2 right-2 z-10">
+          <FavoriteButton movie={toMovieSummary(movie)} variant="icon" />
+        </div>
       </div>
       <h3 className="mt-3 line-clamp-2 font-semibold leading-snug transition-colors group-hover:text-accent">
         <Link
