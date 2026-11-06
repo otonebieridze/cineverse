@@ -1,4 +1,5 @@
 import Form from "next/form";
+import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
 
 type SearchFormProps = {
@@ -12,12 +13,9 @@ export function SearchForm({ query }: SearchFormProps) {
         Search movies by title
       </label>
       <SearchInput query={query} />
-      <button
-        type="submit"
-        className="h-12 shrink-0 rounded-full bg-accent px-6 font-medium text-accent-foreground transition-opacity hover:opacity-90"
-      >
+      <Button type="submit" className="h-12 shrink-0 px-6">
         Search
-      </button>
+      </Button>
     </Form>
   );
 }
