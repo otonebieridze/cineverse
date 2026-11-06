@@ -62,20 +62,31 @@ export async function getMovieGenres(): Promise<GenreListResponse> {
   return tmdbFetch("/genre/movie/list");
 }
 
-export async function discoverMovies(genreId?: number): Promise<PaginatedResponse<Movie>> {
+export async function discoverMovies(
+  genreId: number | undefined,
+  page: number,
+): Promise<PaginatedResponse<Movie>> {
   "use cache";
   cacheLife("hours");
-  const params = new URLSearchParams({ sort_by: "popularity.desc", include_adult: "false" });
+  const params = new URLSearchParams({
+    sort_by: "popularity.desc",
+    include_adult: "false",
+    page: String(page),
+  });
   if (genreId !== undefined) {
     params.set("with_genres", String(genreId));
   }
   return tmdbFetch(`/discover/movie?${params}`);
 }
 
-export async function searchMovies(query: string): Promise<PaginatedResponse<Movie>> {
+export async function searchMovies(
+  query: string,
+  page: number,
+): Promise<PaginatedResponse<Movie>> {
   "use cache";
   cacheLife("hours");
-  return tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false`);
+  const params = new URLSearchParams({ query, include_adult: "false", page: String(page) });
+  return tmdbFetch(`/search/movie?${params}`);
 }
 
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {

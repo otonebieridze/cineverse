@@ -1,21 +1,27 @@
 import { GenreFilter } from "@/components/GenreFilter";
 import { MovieResults } from "@/components/MovieResults";
 import { MovieSection } from "@/components/MovieSection";
+import { Pagination } from "@/components/Pagination";
+import { loadPage } from "@/lib/pagination";
 import { discoverMovies, getMovieGenres } from "@/lib/tmdb";
 
 type BrowseMoviesProps = {
   genreId: number | undefined;
+  page: number;
 };
 
-export async function BrowseMovies({ genreId }: BrowseMoviesProps) {
+export async function BrowseMovies({ genreId, page }: BrowseMoviesProps) {
   const [{ genres }, discovered] = await Promise.all([
     getMovieGenres(),
-    discoverMovies(genreId),
+    loadPage((target) => discoverMovies(genreId, target), page),
   ]);
   const activeGenre = genres.find((genre) => genre.id === genreId);
 
-  const { results } =
-    genreId !== undefined && !activeGenre ? await discoverMovies() : discovered;
+  // An unknown genre id falls back to "All".
+  const result =
+    genreId !== undefined && !activeGenre
+      ? await loadPage((target) => discoverMovies(undefined, target), page)
+      : discovered;
 
   return (
     <>
@@ -25,9 +31,15 @@ export async function BrowseMovies({ genreId }: BrowseMoviesProps) {
         title={activeGenre?.name ?? "Popular movies"}
       >
         <MovieResults
-          movies={results}
+          movies={result.data.results}
           emptyMessage="No movies found for this genre."
           aboveTheFold
+        />
+        <Pagination
+          pathname="/movies"
+          params={activeGenre ? { genre: String(activeGenre.id) } : undefined}
+          page={result.page}
+          totalPages={result.totalPages}
         />
       </MovieSection>
     </>
