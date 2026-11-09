@@ -17,7 +17,7 @@ export function MovieCard({ movie, loading, fetchPriority }: MovieCardProps) {
   const rating = movie.vote_average.toFixed(1);
 
   return (
-    <article className="group relative">
+    <article className="group relative isolate">
       <div className="relative aspect-2/3 overflow-hidden rounded-card bg-surface shadow-card">
         {posterUrl ? (
           <Image
