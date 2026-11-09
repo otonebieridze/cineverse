@@ -2,7 +2,14 @@
 
 A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse popular and trending movies, search, filter by genre, view details, and save favorites.
 
-> **Status:** in development. Live demo and screenshots will be added soon.
+**Live demo:** [cineverse-three-eta.vercel.app](https://cineverse-three-eta.vercel.app/)
+
+## Screenshots
+
+![Home page with trending and popular movies](docs/screenshots/home.webp)
+![Movie details page](docs/screenshots/details.webp)
+![Favorites page](docs/screenshots/favorites.webp)
+![Mobile layout](docs/screenshots/mobile.webp)
 
 ## Tech Stack
 
@@ -20,7 +27,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Genre filtering and pagination
 - [x] Favorites (persisted in localStorage)
 - [x] Responsive layout
-- [ ] Deployment on Vercel
+- [x] Deployment on Vercel
 
 ## Getting Started
 
@@ -65,6 +72,14 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Create a production build        |
 | `npm run start` | Run the production build         |
 | `npm run lint`  | Run ESLint                       |
+
+## Deployment
+
+The app is deployed on [Vercel](https://vercel.com/):
+
+1. Import the GitHub repository in Vercel. The Next.js preset needs no extra configuration.
+2. Under **Settings → Environment Variables**, add `TMDB_ACCESS_TOKEN` for **Production** and **Preview** before the first build. Pages are prerendered at build time and call TMDB, so the build fails without it.
+3. Deploy. Every push to `main` triggers a production deployment, and pull requests get preview deployments.
 
 ## Architecture Notes
 
