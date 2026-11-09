@@ -8,7 +8,7 @@ type PaginationProps = {
 };
 
 const BUTTON_CLASS_NAME =
-  "rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium";
+  "rounded-full border border-border bg-surface px-4 py-2.5 text-sm font-medium";
 
 export function Pagination({ pathname, params = {}, page, totalPages }: PaginationProps) {
   if (totalPages <= 1) {
@@ -44,9 +44,9 @@ export function Pagination({ pathname, params = {}, page, totalPages }: Paginati
   }
 
   return (
-    <nav aria-label="Pagination" className="mt-10 flex items-center justify-between gap-4">
+    <nav aria-label="Pagination" className="mt-10 flex items-center justify-between gap-2 sm:gap-4">
       {pageLink(page - 1, "Previous", page > 1)}
-      <p className="text-sm text-muted">
+      <p className="text-sm whitespace-nowrap text-muted">
         Page {page} of {totalPages}
       </p>
       {pageLink(page + 1, "Next", page < totalPages)}
