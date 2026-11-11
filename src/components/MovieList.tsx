@@ -5,17 +5,15 @@ export const MOVIES_PER_SECTION = 12;
 
 type MovieListProps = {
   loadMovies: () => Promise<PaginatedResponse<Movie>>;
-  aboveTheFold?: boolean;
 };
 
-export async function MovieList({ loadMovies, aboveTheFold = false }: MovieListProps) {
+export async function MovieList({ loadMovies }: MovieListProps) {
   const { results } = await loadMovies();
 
   return (
     <MovieResults
       movies={results.slice(0, MOVIES_PER_SECTION)}
       emptyMessage="No movies to show right now."
-      aboveTheFold={aboveTheFold}
     />
   );
 }

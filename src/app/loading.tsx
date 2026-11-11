@@ -1,14 +1,15 @@
 import { Container } from "@/components/Container";
+import { HeroBannerSkeleton } from "@/components/HeroBannerSkeleton";
 import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
 
 export default function Loading() {
   return (
-    <Container className="space-y-14 py-12 sm:py-16">
-      <div aria-hidden="true" className="motion-safe:animate-pulse">
-        <div className="h-9 w-64 rounded bg-surface sm:h-10" />
-        <div className="mt-4 h-5 w-80 max-w-full rounded bg-surface" />
-      </div>
-      <MovieGridSkeleton />
-    </Container>
+    <>
+      <HeroBannerSkeleton />
+      <Container className="space-y-14 py-12 sm:py-16">
+        <div aria-hidden="true" className="h-8 w-56 rounded bg-surface motion-safe:animate-pulse" />
+        <MovieGridSkeleton />
+      </Container>
+    </>
   );
 }
