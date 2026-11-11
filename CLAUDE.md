@@ -29,7 +29,7 @@ Speed is a core requirement, not a later optimization.
 - Fetch independent data in parallel with `Promise.all`. Avoid request waterfalls.
 - Give every data-driven route a `loading.tsx` and use `<Suspense>` so the UI appears immediately and data streams in.
 - Navigate with `next/link` only (never plain `<a>` or `router.push` for internal links) so prefetching works.
-- Use `next/image` with accurate `sizes`. Set `priority` only on the above-the-fold image that is the LCP candidate.
+- Use `next/image` with accurate `sizes`. Use `fetchPriority="high"` (or `preload`) only on the above-the-fold image that is the LCP candidate; `priority` is deprecated in Next.js 16.
 - Use `next/font` for fonts. No layout shift.
 - Keep client bundles small: avoid heavy dependencies, and lazy-load large client-only code with `next/dynamic`.
 - Do not add a dependency without a clear reason.
