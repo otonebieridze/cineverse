@@ -3,6 +3,7 @@ import { cacheLife } from "next/cache";
 import type {
   GenreListResponse,
   Movie,
+  MovieCredits,
   MovieDetails,
   PaginatedResponse,
 } from "@/types/tmdb";
@@ -93,4 +94,13 @@ export async function getMovieDetails(id: string): Promise<MovieDetails | null> 
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}`);
+}
+
+export async function getMovieCredits(id: string): Promise<MovieCredits | null> {
+  "use cache";
+  cacheLife("days");
+  if (!/^\d+$/.test(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/credits`);
 }
