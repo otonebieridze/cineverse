@@ -46,3 +46,17 @@ export type CastMember = {
 export type MovieCredits = {
   cast: CastMember[];
 };
+
+export type Video = {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
+  official: boolean;
+  published_at: string;
+};
+
+export type VideoListResponse = {
+  results: Video[];
+};

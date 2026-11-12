@@ -87,6 +87,7 @@ The app is deployed on [Vercel](https://vercel.com/):
 - **Server-side data fetching.** All TMDB requests run on the server, so the access token is never exposed to the browser (no `NEXT_PUBLIC_` prefix).
 - **Caching.** TMDB requests are cached with the `"use cache"` directive and a `cacheLife` profile chosen per endpoint (hours for lists and search, days for movie details, weeks for genres) to keep navigation fast and reduce API calls.
 - **Server Components by default.** `"use client"` is used only for interactive parts such as search, filters, and favorites.
+- **Click-to-load trailers.** The details page shows a lightweight preview with a play button. The privacy-enhanced YouTube embed (`youtube-nocookie.com`) loads only after the user presses play.
 
 ## Acknowledgements
 

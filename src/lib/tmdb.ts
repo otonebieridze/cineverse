@@ -6,6 +6,7 @@ import type {
   MovieCredits,
   MovieDetails,
   PaginatedResponse,
+  VideoListResponse,
 } from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -103,4 +104,13 @@ export async function getMovieCredits(id: string): Promise<MovieCredits | null> 
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/credits`);
+}
+
+export async function getMovieVideos(id: string): Promise<VideoListResponse | null> {
+  "use cache";
+  cacheLife("days");
+  if (!/^\d+$/.test(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/videos`);
 }
