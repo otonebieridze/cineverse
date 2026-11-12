@@ -11,6 +11,10 @@ import type {
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
+function isValidMovieId(id: string): boolean {
+  return /^\d+$/.test(id);
+}
+
 async function tmdbFetch<T>(path: string): Promise<T> {
   const data = await tmdbFetchOrNull<T>(path);
   if (data === null) {
@@ -91,7 +95,7 @@ export async function searchMovies(
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {
   "use cache";
   cacheLife("days");
-  if (!/^\d+$/.test(id)) {
+  if (!isValidMovieId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}`);
@@ -100,7 +104,7 @@ export async function getMovieDetails(id: string): Promise<MovieDetails | null> 
 export async function getMovieCredits(id: string): Promise<MovieCredits | null> {
   "use cache";
   cacheLife("days");
-  if (!/^\d+$/.test(id)) {
+  if (!isValidMovieId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/credits`);
@@ -109,7 +113,7 @@ export async function getMovieCredits(id: string): Promise<MovieCredits | null> 
 export async function getMovieVideos(id: string): Promise<VideoListResponse | null> {
   "use cache";
   cacheLife("days");
-  if (!/^\d+$/.test(id)) {
+  if (!isValidMovieId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/videos`);
@@ -120,7 +124,7 @@ export async function getMovieRecommendations(
 ): Promise<PaginatedResponse<Movie> | null> {
   "use cache";
   cacheLife("hours");
-  if (!/^\d+$/.test(id)) {
+  if (!isValidMovieId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/recommendations`);
