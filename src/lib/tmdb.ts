@@ -114,3 +114,14 @@ export async function getMovieVideos(id: string): Promise<VideoListResponse | nu
   }
   return tmdbFetchOrNull(`/movie/${id}/videos`);
 }
+
+export async function getMovieRecommendations(
+  id: string,
+): Promise<PaginatedResponse<Movie> | null> {
+  "use cache";
+  cacheLife("hours");
+  if (!/^\d+$/.test(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/recommendations`);
+}

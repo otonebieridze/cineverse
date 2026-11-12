@@ -5,9 +5,16 @@ import { CastList } from "@/components/CastList";
 import { CastListSkeleton } from "@/components/CastListSkeleton";
 import { Container } from "@/components/Container";
 import { MovieDetails } from "@/components/MovieDetails";
+import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
+import { RecommendedMovies } from "@/components/RecommendedMovies";
 import { TrailerSection } from "@/components/TrailerSection";
 import { TrailerSectionSkeleton } from "@/components/TrailerSectionSkeleton";
-import { getMovieCredits, getMovieDetails, getMovieVideos } from "@/lib/tmdb";
+import {
+  getMovieCredits,
+  getMovieDetails,
+  getMovieRecommendations,
+  getMovieVideos,
+} from "@/lib/tmdb";
 
 export async function generateMetadata({
   params,
@@ -26,6 +33,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
   const { id } = await params;
   const creditsPromise = getMovieCredits(id).catch(() => null);
   const videosPromise = getMovieVideos(id).catch(() => null);
+  const recommendationsPromise = getMovieRecommendations(id).catch(() => null);
   const movie = await getMovieDetails(id);
 
   if (!movie) {
@@ -45,6 +53,9 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
         </Suspense>
         <Suspense fallback={<CastListSkeleton />}>
           <CastList creditsPromise={creditsPromise} />
+        </Suspense>
+        <Suspense fallback={<MovieGridSkeleton />}>
+          <RecommendedMovies recommendationsPromise={recommendationsPromise} />
         </Suspense>
       </Container>
     </>
