@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheLife } from "next/cache";
+import type { BrowseFilters } from "@/lib/browseFilters";
 import type {
   GenreListResponse,
   Movie,
@@ -66,7 +67,7 @@ export async function getMovieGenres(): Promise<GenreListResponse> {
 }
 
 export async function discoverMovies(
-  genreId: number | undefined,
+  filters: BrowseFilters,
   page: number,
 ): Promise<PaginatedResponse<Movie>> {
   "use cache";
@@ -76,8 +77,8 @@ export async function discoverMovies(
     include_adult: "false",
     page: String(page),
   });
-  if (genreId !== undefined) {
-    params.set("with_genres", String(genreId));
+  if (filters.genreId !== undefined) {
+    params.set("with_genres", String(filters.genreId));
   }
   return tmdbFetch(`/discover/movie?${params}`);
 }

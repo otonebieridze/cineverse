@@ -2,30 +2,32 @@ import { GenreFilter } from "@/components/GenreFilter";
 import { MovieResults } from "@/components/MovieResults";
 import { MovieSection } from "@/components/MovieSection";
 import { Pagination } from "@/components/Pagination";
+import { type BrowseFilters, toBrowseParams } from "@/lib/browseFilters";
 import { loadPage } from "@/lib/pagination";
 import { discoverMovies, getMovieGenres } from "@/lib/tmdb";
 
 type BrowseMoviesProps = {
-  genreId: number | undefined;
+  filters: BrowseFilters;
   page: number;
 };
 
-export async function BrowseMovies({ genreId, page }: BrowseMoviesProps) {
+export async function BrowseMovies({ filters, page }: BrowseMoviesProps) {
   const [{ genres }, discovered] = await Promise.all([
     getMovieGenres(),
-    loadPage((target) => discoverMovies(genreId, target), page),
+    loadPage((target) => discoverMovies(filters, target), page),
   ]);
-  const activeGenre = genres.find((genre) => genre.id === genreId);
+  const activeGenre = genres.find((genre) => genre.id === filters.genreId);
+  const activeFilters: BrowseFilters = { ...filters, genreId: activeGenre?.id };
 
   // An unknown genre id falls back to "All".
   const result =
-    genreId !== undefined && !activeGenre
-      ? await loadPage((target) => discoverMovies(undefined, target), page)
+    filters.genreId !== undefined && !activeGenre
+      ? await loadPage((target) => discoverMovies(activeFilters, target), page)
       : discovered;
 
   return (
     <>
-      <GenreFilter genres={genres} activeGenreId={activeGenre?.id} />
+      <GenreFilter genres={genres} filters={activeFilters} />
       <MovieSection
         id="browse-results"
         title={activeGenre?.name ?? "Popular movies"}
@@ -37,7 +39,7 @@ export async function BrowseMovies({ genreId, page }: BrowseMoviesProps) {
         />
         <Pagination
           pathname="/movies"
-          params={activeGenre ? { genre: String(activeGenre.id) } : undefined}
+          params={toBrowseParams(activeFilters)}
           page={result.page}
           totalPages={result.totalPages}
         />
