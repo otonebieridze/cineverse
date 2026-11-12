@@ -3,11 +3,17 @@ import { cacheLife } from "next/cache";
 import type {
   GenreListResponse,
   Movie,
+  MovieCredits,
   MovieDetails,
   PaginatedResponse,
+  VideoListResponse,
 } from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
+
+function isValidMovieId(id: string): boolean {
+  return /^\d+$/.test(id);
+}
 
 async function tmdbFetch<T>(path: string): Promise<T> {
   const data = await tmdbFetchOrNull<T>(path);
@@ -89,8 +95,37 @@ export async function searchMovies(
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {
   "use cache";
   cacheLife("days");
-  if (!/^\d+$/.test(id)) {
+  if (!isValidMovieId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}`);
+}
+
+export async function getMovieCredits(id: string): Promise<MovieCredits | null> {
+  "use cache";
+  cacheLife("days");
+  if (!isValidMovieId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/credits`);
+}
+
+export async function getMovieVideos(id: string): Promise<VideoListResponse | null> {
+  "use cache";
+  cacheLife("days");
+  if (!isValidMovieId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/videos`);
+}
+
+export async function getMovieRecommendations(
+  id: string,
+): Promise<PaginatedResponse<Movie> | null> {
+  "use cache";
+  cacheLife("hours");
+  if (!isValidMovieId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/recommendations`);
 }

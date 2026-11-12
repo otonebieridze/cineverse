@@ -34,3 +34,29 @@ export type PaginatedResponse<T> = {
   total_pages: number;
   total_results: number;
 };
+
+export type CastMember = {
+  id: number;
+  credit_id: string;
+  name: string;
+  character: string;
+  profile_path: string | null;
+};
+
+export type MovieCredits = {
+  cast: CastMember[];
+};
+
+export type Video = {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
+  official: boolean;
+  published_at: string;
+};
+
+export type VideoListResponse = {
+  results: Video[];
+};
