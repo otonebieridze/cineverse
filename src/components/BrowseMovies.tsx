@@ -1,17 +1,19 @@
+import { BrowseFiltersForm } from "@/components/BrowseFiltersForm";
 import { GenreFilter } from "@/components/GenreFilter";
 import { MovieResults } from "@/components/MovieResults";
 import { MovieSection } from "@/components/MovieSection";
 import { Pagination } from "@/components/Pagination";
-import { type BrowseFilters, toBrowseParams } from "@/lib/browseFilters";
+import { type BrowseFilters, DEFAULT_SORT, SORT_OPTIONS, toBrowseParams } from "@/lib/browseFilters";
 import { loadPage } from "@/lib/pagination";
 import { discoverMovies, getMovieGenres } from "@/lib/tmdb";
 
 type BrowseMoviesProps = {
   filters: BrowseFilters;
   page: number;
+  currentYear: number;
 };
 
-export async function BrowseMovies({ filters, page }: BrowseMoviesProps) {
+export async function BrowseMovies({ filters, page, currentYear }: BrowseMoviesProps) {
   const [{ genres }, discovered] = await Promise.all([
     getMovieGenres(),
     loadPage((target) => discoverMovies(filters, target), page),
@@ -25,16 +27,23 @@ export async function BrowseMovies({ filters, page }: BrowseMoviesProps) {
       ? await loadPage((target) => discoverMovies(activeFilters, target), page)
       : discovered;
 
+  const sortLabel =
+    filters.sort === DEFAULT_SORT
+      ? undefined
+      : SORT_OPTIONS.find((option) => option.value === filters.sort)?.label;
+  const title =
+    [activeGenre?.name, sortLabel].filter(Boolean).join(" · ") || "Popular movies";
+
   return (
     <>
-      <GenreFilter genres={genres} filters={activeFilters} />
-      <MovieSection
-        id="browse-results"
-        title={activeGenre?.name ?? "Popular movies"}
-      >
+      <div className="space-y-4">
+        <GenreFilter genres={genres} filters={activeFilters} />
+        <BrowseFiltersForm filters={activeFilters} currentYear={currentYear} />
+      </div>
+      <MovieSection id="browse-results" title={title}>
         <MovieResults
           movies={result.data.results}
-          emptyMessage="No movies found for this genre."
+          emptyMessage="No movies match these filters."
           aboveTheFold
         />
         <Pagination
