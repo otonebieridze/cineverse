@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheLife } from "next/cache";
+import type { BrowseFilters, SortOption } from "@/lib/browseFilters";
 import type {
   GenreListResponse,
   Movie,
@@ -10,6 +11,14 @@ import type {
 } from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
+
+const DISCOVER_SORT_BY: Record<SortOption, string> = {
+  popularity: "popularity.desc",
+  rating: "vote_average.desc",
+  release: "primary_release_date.desc",
+};
+
+const MIN_VOTE_COUNT = 200;
 
 function isValidMovieId(id: string): boolean {
   return /^\d+$/.test(id);
@@ -66,18 +75,39 @@ export async function getMovieGenres(): Promise<GenreListResponse> {
 }
 
 export async function discoverMovies(
-  genreId: number | undefined,
+  filters: BrowseFilters,
   page: number,
 ): Promise<PaginatedResponse<Movie>> {
   "use cache";
   cacheLife("hours");
   const params = new URLSearchParams({
-    sort_by: "popularity.desc",
+    sort_by: DISCOVER_SORT_BY[filters.sort],
     include_adult: "false",
     page: String(page),
   });
-  if (genreId !== undefined) {
-    params.set("with_genres", String(genreId));
+  if (filters.genreIds.length > 0) {
+    params.set("with_genres", filters.genreIds.join(","));
+  }
+  if (filters.fromYear !== undefined) {
+    params.set("primary_release_date.gte", `${filters.fromYear}-01-01`);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const releasedBefore = filters.toYear !== undefined ? `${filters.toYear}-12-31` : undefined;
+  if (filters.sort === "release") {
+    params.set(
+      "primary_release_date.lte",
+      releasedBefore && releasedBefore < today ? releasedBefore : today,
+    );
+  } else if (releasedBefore) {
+    params.set("primary_release_date.lte", releasedBefore);
+  }
+
+  if (filters.minRating !== undefined) {
+    params.set("vote_average.gte", String(filters.minRating));
+  }
+  if (filters.sort === "rating" || filters.minRating !== undefined) {
+    params.set("vote_count.gte", String(MIN_VOTE_COUNT));
   }
   return tmdbFetch(`/discover/movie?${params}`);
 }

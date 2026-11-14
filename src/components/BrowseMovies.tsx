@@ -1,43 +1,56 @@
+import { BrowseFiltersForm } from "@/components/BrowseFiltersForm";
 import { GenreFilter } from "@/components/GenreFilter";
 import { MovieResults } from "@/components/MovieResults";
 import { MovieSection } from "@/components/MovieSection";
 import { Pagination } from "@/components/Pagination";
+import { type BrowseFilters, DEFAULT_SORT, SORT_OPTIONS, toBrowseParams } from "@/lib/browseFilters";
 import { loadPage } from "@/lib/pagination";
 import { discoverMovies, getMovieGenres } from "@/lib/tmdb";
 
 type BrowseMoviesProps = {
-  genreId: number | undefined;
+  filters: BrowseFilters;
   page: number;
+  currentYear: number;
 };
 
-export async function BrowseMovies({ genreId, page }: BrowseMoviesProps) {
+export async function BrowseMovies({ filters, page, currentYear }: BrowseMoviesProps) {
   const [{ genres }, discovered] = await Promise.all([
     getMovieGenres(),
-    loadPage((target) => discoverMovies(genreId, target), page),
+    loadPage((target) => discoverMovies(filters, target), page),
   ]);
-  const activeGenre = genres.find((genre) => genre.id === genreId);
+  const activeGenres = genres.filter((genre) => filters.genreIds.includes(genre.id));
+  const activeFilters: BrowseFilters = {
+    ...filters,
+    genreIds: activeGenres.map((genre) => genre.id).toSorted((a, b) => a - b),
+  };
 
-  // An unknown genre id falls back to "All".
   const result =
-    genreId !== undefined && !activeGenre
-      ? await loadPage((target) => discoverMovies(undefined, target), page)
+    activeGenres.length !== filters.genreIds.length
+      ? await loadPage((target) => discoverMovies(activeFilters, target), page)
       : discovered;
+
+  const genreLabel = activeGenres.map((genre) => genre.name).join(" + ");
+  const sortLabel =
+    filters.sort === DEFAULT_SORT
+      ? undefined
+      : SORT_OPTIONS.find((option) => option.value === filters.sort)?.label;
+  const title = [genreLabel, sortLabel].filter(Boolean).join(" · ") || "Popular movies";
 
   return (
     <>
-      <GenreFilter genres={genres} activeGenreId={activeGenre?.id} />
-      <MovieSection
-        id="browse-results"
-        title={activeGenre?.name ?? "Popular movies"}
-      >
+      <div className="space-y-4">
+        <GenreFilter genres={genres} filters={activeFilters} />
+        <BrowseFiltersForm filters={activeFilters} currentYear={currentYear} />
+      </div>
+      <MovieSection id="browse-results" title={title}>
         <MovieResults
           movies={result.data.results}
-          emptyMessage="No movies found for this genre."
+          emptyMessage="No movies match these filters."
           aboveTheFold
         />
         <Pagination
           pathname="/movies"
-          params={activeGenre ? { genre: String(activeGenre.id) } : undefined}
+          params={toBrowseParams(activeFilters)}
           page={result.page}
           totalPages={result.totalPages}
         />
