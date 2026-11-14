@@ -6,10 +6,25 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 
 ## Screenshots
 
-![Home page with trending and popular movies](docs/screenshots/home.webp)
-![Movie details page](docs/screenshots/details.webp)
-![Favorites page](docs/screenshots/favorites.webp)
-![Mobile layout](docs/screenshots/mobile.webp)
+![Home page with a featured movie hero banner above trending movies](docs/screenshots/home.webp)
+
+*Home: featured hero banner*
+
+![Browse page with Crime and Thriller selected and the filters panel open](docs/screenshots/browse.webp)
+
+*Browse: sort, year range, minimum rating and multi-genre filters*
+
+![Movie details page with trailer preview and cast list](docs/screenshots/details.webp)
+
+*Details: click-to-load trailer, cast and recommendations*
+
+![Favorites page with saved movies](docs/screenshots/favorites.webp)
+
+*Favorites: saved movies, persisted in the browser*
+
+<img src="docs/screenshots/mobile.webp" alt="Home page on a phone with the featured hero banner" width="260">
+
+*Mobile: responsive layout with the hero banner*
 
 ## Tech Stack
 
