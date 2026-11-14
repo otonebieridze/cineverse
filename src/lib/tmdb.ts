@@ -85,8 +85,8 @@ export async function discoverMovies(
     include_adult: "false",
     page: String(page),
   });
-  if (filters.genreId !== undefined) {
-    params.set("with_genres", String(filters.genreId));
+  if (filters.genreIds.length > 0) {
+    params.set("with_genres", filters.genreIds.join(","));
   }
   if (filters.fromYear !== undefined) {
     params.set("primary_release_date.gte", `${filters.fromYear}-01-01`);

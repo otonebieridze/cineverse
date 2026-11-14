@@ -18,21 +18,23 @@ export async function BrowseMovies({ filters, page, currentYear }: BrowseMoviesP
     getMovieGenres(),
     loadPage((target) => discoverMovies(filters, target), page),
   ]);
-  const activeGenre = genres.find((genre) => genre.id === filters.genreId);
-  const activeFilters: BrowseFilters = { ...filters, genreId: activeGenre?.id };
+  const activeGenres = genres.filter((genre) => filters.genreIds.includes(genre.id));
+  const activeFilters: BrowseFilters = {
+    ...filters,
+    genreIds: activeGenres.map((genre) => genre.id).toSorted((a, b) => a - b),
+  };
 
-  // An unknown genre id falls back to "All".
   const result =
-    filters.genreId !== undefined && !activeGenre
+    activeGenres.length !== filters.genreIds.length
       ? await loadPage((target) => discoverMovies(activeFilters, target), page)
       : discovered;
 
+  const genreLabel = activeGenres.map((genre) => genre.name).join(" + ");
   const sortLabel =
     filters.sort === DEFAULT_SORT
       ? undefined
       : SORT_OPTIONS.find((option) => option.value === filters.sort)?.label;
-  const title =
-    [activeGenre?.name, sortLabel].filter(Boolean).join(" · ") || "Popular movies";
+  const title = [genreLabel, sortLabel].filter(Boolean).join(" · ") || "Popular movies";
 
   return (
     <>

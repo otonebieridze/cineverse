@@ -1,6 +1,6 @@
 # CineVerse
 
-A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse popular and trending movies, search, filter by genre, view details, and save favorites.
+A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse popular and trending movies, search, filter and sort, view details, and save favorites.
 
 **Live demo:** [cineverse-three-eta.vercel.app](https://cineverse-three-eta.vercel.app/)
 
@@ -27,6 +27,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Cast, trailer and recommendations on movie details
 - [x] Search with debounced input
 - [x] Genre filtering and pagination
+- [x] Advanced filters: sort, year range, minimum rating, multiple genres (shareable URLs)
 - [x] Favorites (persisted in localStorage)
 - [x] Responsive layout
 - [x] Deployment on Vercel

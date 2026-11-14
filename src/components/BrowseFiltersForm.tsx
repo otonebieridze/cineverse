@@ -26,7 +26,7 @@ export function BrowseFiltersForm({ filters, currentYear }: BrowseFiltersFormPro
     filters.minRating !== undefined,
   ].filter(Boolean).length;
   const resetHref = toBrowseHref({
-    genreId: filters.genreId,
+    genreIds: filters.genreIds,
     sort: DEFAULT_SORT,
     fromYear: undefined,
     toYear: undefined,
@@ -65,8 +65,8 @@ export function BrowseFiltersForm({ filters, currentYear }: BrowseFiltersFormPro
         action="/movies"
         className="border-t border-border px-5 pt-4 pb-5"
       >
-        {filters.genreId !== undefined && (
-          <input type="hidden" name="genre" value={filters.genreId} />
+        {filters.genreIds.length > 0 && (
+          <input type="hidden" name="genre" value={filters.genreIds.join(",")} />
         )}
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

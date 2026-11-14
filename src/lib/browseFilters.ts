@@ -17,7 +17,7 @@ export const MIN_RATING_OPTIONS = [5, 6, 7, 8] as const;
 export const MIN_YEAR = 1900;
 
 export type BrowseFilters = {
-  genreId: number | undefined;
+  genreIds: number[];
   sort: SortOption;
   fromYear: number | undefined;
   toYear: number | undefined;
@@ -32,6 +32,14 @@ export async function getCurrentYear(): Promise<number> {
 
 function parseInteger(value: SearchParamValue): number | undefined {
   return typeof value === "string" && /^\d+$/.test(value) ? Number(value) : undefined;
+}
+
+function parseGenreIds(value: SearchParamValue): number[] {
+  if (typeof value !== "string") {
+    return [];
+  }
+  const ids = value.split(",").flatMap((part) => parseInteger(part) ?? []);
+  return [...new Set(ids)].toSorted((a, b) => a - b);
 }
 
 function parseYear(value: SearchParamValue, currentYear: number): number | undefined {
@@ -50,7 +58,7 @@ export function parseBrowseFilters(
   const isReversed = fromYear !== undefined && toYear !== undefined && fromYear > toYear;
 
   return {
-    genreId: parseInteger(genre),
+    genreIds: parseGenreIds(genre),
     sort: SORT_OPTIONS.find((option) => option.value === sort)?.value ?? DEFAULT_SORT,
     fromYear: isReversed ? toYear : fromYear,
     toYear: isReversed ? fromYear : toYear,
@@ -60,8 +68,8 @@ export function parseBrowseFilters(
 
 export function toBrowseParams(filters: BrowseFilters): Record<string, string> {
   const params: Record<string, string> = {};
-  if (filters.genreId !== undefined) {
-    params.genre = String(filters.genreId);
+  if (filters.genreIds.length > 0) {
+    params.genre = filters.genreIds.join(",");
   }
   if (filters.sort !== DEFAULT_SORT) {
     params.sort = filters.sort;
