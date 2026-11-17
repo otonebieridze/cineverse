@@ -11,8 +11,10 @@ See `README.md` for setup and the feature checklist.
 - `npm run dev` - start the dev server
 - `npm run lint` - run ESLint
 - `npm run build` - production build (also type-checks the whole project)
+- `npm test` - run unit tests once (Vitest)
+- `npm run test:watch` - run unit tests in watch mode
 
-Run `npm run lint && npm run build` before considering any code change done.
+Run `npm run lint && npm test && npm run build` before considering any code change done.
 
 ## Architecture
 
@@ -51,6 +53,12 @@ Speed is a core requirement, not a later optimization.
 - Aim for a refined, cinematic, consistent look: clear visual hierarchy, generous spacing, smooth but restrained motion, and polished hover/focus states.
 - Accessibility is required: semantic HTML, meaningful `alt` text, visible focus styles, keyboard navigation, sufficient color contrast.
 
+## Testing
+
+- Unit tests use Vitest and live next to the code they test as `*.test.ts(x)`.
+- Unit and component tests never hit the network (no real TMDB calls). Replace slow or unpredictable dependencies with fakes at the boundary.
+- Test behavior through the public API, not implementation details. No snapshot tests, no chasing a coverage number.
+
 ## Project Structure
 
 ```
@@ -67,5 +75,5 @@ src/
 - Make only the changes that were requested. No unrelated refactors or extra features.
 - Do not read or modify `.env*` files. Environment variables are documented in `.env.example`.
 - Do not commit or push unless explicitly asked.
-- Commit messages follow Conventional Commits (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`), in the imperative mood, one logical change per commit.
+- Commit messages follow Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `ci:`, `docs:`, `chore:`), in the imperative mood, one logical change per commit.
 - If a requirement is ambiguous or a change would affect the architecture above, ask before proceeding.

@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheLife } from "next/cache";
 import type { BrowseFilters, SortOption } from "@/lib/browseFilters";
+import { isValidMovieId } from "@/lib/movieId";
 import type {
   GenreListResponse,
   Movie,
@@ -19,10 +20,6 @@ const DISCOVER_SORT_BY: Record<SortOption, string> = {
 };
 
 const MIN_VOTE_COUNT = 200;
-
-function isValidMovieId(id: string): boolean {
-  return /^\d+$/.test(id);
-}
 
 async function tmdbFetch<T>(path: string): Promise<T> {
   const data = await tmdbFetchOrNull<T>(path);
