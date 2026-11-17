@@ -84,12 +84,25 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command         | Description                      |
-| --------------- | -------------------------------- |
-| `npm run dev`   | Start the development server     |
-| `npm run build` | Create a production build        |
-| `npm run start` | Run the production build         |
-| `npm run lint`  | Run ESLint                       |
+| Command              | Description                  |
+| -------------------- | ---------------------------- |
+| `npm run dev`        | Start the development server |
+| `npm run build`      | Create a production build    |
+| `npm run start`      | Run the production build     |
+| `npm run lint`       | Run ESLint                   |
+| `npm test`           | Run unit tests once          |
+| `npm run test:watch` | Run unit tests in watch mode |
+
+## Testing
+
+Unit tests use [Vitest](https://vitest.dev/) and sit next to the code they test (`*.test.ts`). They cover pure logic and never call the TMDB API, so they are fast and deterministic.
+
+```bash
+npm test                                  # run all unit tests once
+npm run test:watch                        # re-run tests on every file save
+npx vitest run src/lib/videos.test.ts     # run a single test file
+npx vitest run -t "prefers an official"   # run tests whose name matches
+```
 
 ## Deployment
 
