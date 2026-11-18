@@ -97,7 +97,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Testing
 
-Unit tests use [Vitest](https://vitest.dev/) and sit next to the code they test (`*.test.ts`). They cover pure logic and never call the TMDB API, so they are fast and deterministic.
+Unit and component tests use [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/), and sit next to the code they test (`*.test.ts(x)`). They cover pure logic and interactive components, and never call the TMDB API, so they are fast and deterministic.
 
 ```bash
 npm test                                  # run all unit tests once

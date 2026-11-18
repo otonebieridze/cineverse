@@ -56,6 +56,7 @@ Speed is a core requirement, not a later optimization.
 ## Testing
 
 - Unit tests use Vitest and live next to the code they test as `*.test.ts(x)`.
+- Component tests use React Testing Library. Query by role and accessible name (`getByRole`), not by CSS classes or test ids, and interact with `user-event`.
 - Unit and component tests never hit the network (no real TMDB calls). Replace slow or unpredictable dependencies with fakes at the boundary.
 - Test behavior through the public API, not implementation details. No snapshot tests, no chasing a coverage number.
 
