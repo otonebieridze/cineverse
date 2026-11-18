@@ -15,7 +15,7 @@ See `README.md` for setup and the feature checklist.
 - `npm run test:watch` - run unit tests in watch mode
 - `npm run test:e2e` - run end-to-end tests (Playwright) against the production build; run `npm run build` first
 
-Run `npm run lint && npm test && npm run build` before considering any code change done. GitHub Actions (`.github/workflows/ci.yml`) runs the same checks on every pull request and push to `main`.
+Run `npm run lint && npm test && npm run build` before considering any code change done. GitHub Actions (`.github/workflows/ci.yml`) runs the same checks, plus the end-to-end tests, on every pull request and push to `main`.
 
 ## Architecture
 
