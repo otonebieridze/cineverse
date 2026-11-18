@@ -94,6 +94,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run lint`       | Run ESLint                   |
 | `npm test`           | Run unit tests once          |
 | `npm run test:watch` | Run unit tests in watch mode |
+| `npm run test:e2e`   | Run end-to-end tests         |
 
 ## Testing
 
@@ -104,6 +105,16 @@ npm test                                  # run all unit tests once
 npm run test:watch                        # re-run tests on every file save
 npx vitest run src/lib/videos.test.ts     # run a single test file
 npx vitest run -t "prefers an official"   # run tests whose name matches
+```
+
+End-to-end tests use [Playwright](https://playwright.dev/) and live in `e2e/`. They drive a real browser against the production build and the real TMDB API, so they need `TMDB_ACCESS_TOKEN` in `.env.local`.
+
+```bash
+npx playwright install chromium   # one-time browser download
+npm run build                     # e2e tests run against the production build
+npm run test:e2e                  # run all end-to-end tests
+npx playwright test --ui          # step through tests in the interactive UI
+npx playwright show-report        # open the HTML report of the last run
 ```
 
 ## Deployment
