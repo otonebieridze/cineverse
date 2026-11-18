@@ -14,7 +14,7 @@ See `README.md` for setup and the feature checklist.
 - `npm test` - run unit tests once (Vitest)
 - `npm run test:watch` - run unit tests in watch mode
 
-Run `npm run lint && npm test && npm run build` before considering any code change done.
+Run `npm run lint && npm test && npm run build` before considering any code change done. GitHub Actions (`.github/workflows/ci.yml`) runs the same checks on every pull request and push to `main`.
 
 ## Architecture
 
