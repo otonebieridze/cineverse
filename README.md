@@ -1,5 +1,7 @@
 # CineVerse
 
+[![CI](https://github.com/otonebieridze/cineverse/actions/workflows/ci.yml/badge.svg)](https://github.com/otonebieridze/cineverse/actions/workflows/ci.yml)
+
 A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse popular and trending movies, search, filter and sort, view details, and save favorites.
 
 **Live demo:** [cineverse-three-eta.vercel.app](https://cineverse-three-eta.vercel.app/)
@@ -51,7 +53,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 
 ### Prerequisites
 
-- Node.js 20 or newer
+- Node.js 24 (see `.nvmrc`; CI uses the same version)
 - A free [TMDB account](https://www.themoviedb.org/signup) and an **API Read Access Token** (Settings → API)
 
 ### Installation
