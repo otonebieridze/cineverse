@@ -13,6 +13,7 @@ See `README.md` for setup and the feature checklist.
 - `npm run build` - production build (also type-checks the whole project)
 - `npm test` - run unit tests once (Vitest)
 - `npm run test:watch` - run unit tests in watch mode
+- `npm run test:e2e` - run end-to-end tests (Playwright) against the production build; run `npm run build` first
 
 Run `npm run lint && npm test && npm run build` before considering any code change done. GitHub Actions (`.github/workflows/ci.yml`) runs the same checks on every pull request and push to `main`.
 
@@ -58,6 +59,7 @@ Speed is a core requirement, not a later optimization.
 - Unit tests use Vitest and live next to the code they test as `*.test.ts(x)`.
 - Component tests use React Testing Library. Query by role and accessible name (`getByRole`), not by CSS classes or test ids, and interact with `user-event`.
 - Unit and component tests never hit the network (no real TMDB calls). Replace slow or unpredictable dependencies with fakes at the boundary.
+- End-to-end tests live in `e2e/` and are the only tests that use the real TMDB API. Assert on structure, not on titles that change over time. Use web-first assertions (`await expect(locator)...`) and never fixed waits, and only interact after the page is hydrated.
 - Test behavior through the public API, not implementation details. No snapshot tests, no chasing a coverage number.
 
 ## Project Structure
