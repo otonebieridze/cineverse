@@ -10,7 +10,7 @@ export function SiteFooter() {
             href="https://www.themoviedb.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-sm text-foreground underline-offset-4 hover:underline"
+            className="rounded-sm text-foreground underline underline-offset-4 hover:decoration-2"
           >
             TMDB
           </a>{" "}
