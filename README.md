@@ -47,6 +47,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Advanced filters: sort, year range, minimum rating, multiple genres (shareable URLs)
 - [x] Favorites (persisted in localStorage)
 - [x] Responsive layout
+- [x] Accessibility: skip link and automated axe checks in CI
 - [x] Deployment on Vercel
 
 ## Getting Started
@@ -107,7 +108,7 @@ npx vitest run src/lib/videos.test.ts     # run a single test file
 npx vitest run -t "prefers an official"   # run tests whose name matches
 ```
 
-End-to-end tests use [Playwright](https://playwright.dev/) and live in `e2e/`. They drive a real browser against the production build and the real TMDB API, so they need `TMDB_ACCESS_TOKEN` in `.env.local`.
+End-to-end tests use [Playwright](https://playwright.dev/) and live in `e2e/`. They drive a real browser against the production build and the real TMDB API, so they need `TMDB_ACCESS_TOKEN` in `.env.local`. An accessibility suite (`e2e/accessibility.spec.ts`) scans the main pages with [axe](https://github.com/dequelabs/axe-core) and fails on any WCAG A/AA or best-practice violation.
 
 ```bash
 npx playwright install chromium   # one-time browser download

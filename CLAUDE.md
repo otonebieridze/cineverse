@@ -60,6 +60,7 @@ Speed is a core requirement, not a later optimization.
 - Component tests use React Testing Library. Query by role and accessible name (`getByRole`), not by CSS classes or test ids, and interact with `user-event`.
 - Unit and component tests never hit the network (no real TMDB calls). Replace slow or unpredictable dependencies with fakes at the boundary.
 - End-to-end tests live in `e2e/` and are the only tests that use the real TMDB API. Assert on structure, not on titles that change over time. Use web-first assertions (`await expect(locator)...`) and never fixed waits, and only interact after the page is hydrated.
+- `e2e/accessibility.spec.ts` must stay at zero axe violations. When adding a page or a new UI state, add it to that suite.
 - Test behavior through the public API, not implementation details. No snapshot tests, no chasing a coverage number.
 
 ## Project Structure
