@@ -9,6 +9,8 @@ import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
 import { RecommendedMovies } from "@/components/RecommendedMovies";
 import { TrailerSection } from "@/components/TrailerSection";
 import { TrailerSectionSkeleton } from "@/components/TrailerSectionSkeleton";
+import { getImageUrl } from "@/lib/images";
+import { SHARED_OPEN_GRAPH } from "@/lib/siteMetadata";
 import {
   getMovieCredits,
   getMovieDetails,
@@ -26,7 +28,22 @@ export async function generateMetadata({
     return { title: "Movie not found" };
   }
 
-  return { title: movie.title, description: movie.overview };
+  const backdropUrl = getImageUrl(movie.backdrop_path, "w1280");
+
+  return {
+    title: movie.title,
+    description: movie.overview,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      type: "video.movie",
+      title: movie.title,
+      description: movie.overview,
+      url: `/movie/${movie.id}`,
+      images: backdropUrl
+        ? [{ url: backdropUrl, width: 1280, height: 720, alt: `Scene from ${movie.title}` }]
+        : undefined,
+    },
+  };
 }
 
 export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
