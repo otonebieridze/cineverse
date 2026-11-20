@@ -4,7 +4,10 @@ export const SITE_NAME = "CineVerse";
 
 export const SITE_URL = "https://cineverse-three-eta.vercel.app";
 
-export const SITE_DESCRIPTION = "Discover popular and trending movies, powered by TMDB.";
+export const SITE_TITLE = "CineVerse: Discover, Search and Save Your Favorite Movies";
+
+export const SITE_DESCRIPTION =
+  "Discover popular and trending movies, search by title, filter by genre, year and rating, watch trailers, see the cast and save favorites.";
 
 // Next.js merges metadata shallowly: a page that sets `openGraph` replaces the layout's
 // whole object. Pages spread these shared fields in so they are not lost.
