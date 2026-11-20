@@ -16,7 +16,7 @@ export default function FavoritesPage() {
         </p>
       </div>
 
-      <section aria-labelledby="saved-movies-heading">
+      <section aria-labelledby="saved-movies-heading" className="min-h-screen">
         <h2 id="saved-movies-heading" className="sr-only">
           Saved movies
         </h2>
