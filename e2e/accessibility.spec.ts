@@ -67,6 +67,21 @@ test.describe("accessibility", () => {
     await expectNoAccessibilityViolations(page);
   });
 
+  test("movie details with the cast row scrolled has no accessibility violations", async ({
+    page,
+  }) => {
+    await page.goto("/movie/550");
+    await waitForContent(page);
+    const forward = page.getByRole("button", { name: "Scroll Top cast forward" });
+    const back = page.getByRole("button", { name: "Scroll Top cast back" });
+    await expect(forward).toHaveAttribute("aria-disabled", "false");
+
+    await forward.click();
+    await expect(back).toHaveAttribute("aria-disabled", "false");
+
+    await expectNoAccessibilityViolations(page);
+  });
+
   test("the first Tab reveals a skip link that jumps to the main content", async ({ page }) => {
     // Wait for streamed content: until it arrives, <main> has nothing to focus and the
     // next Tab after the jump would land in the footer.
