@@ -16,3 +16,28 @@ export const SHARED_OPEN_GRAPH = {
   locale: "en_US",
   type: "website",
 } satisfies NonNullable<Metadata["openGraph"]>;
+
+// The default share image from `src/app/opengraph-image.png`. Next.js only adds that file
+// to pages that don't set their own `openGraph`, so pages that do must list it themselves.
+// Keep in sync with the file and `opengraph-image.alt.txt` (checked in e2e/metadata.spec.ts).
+const DEFAULT_OPEN_GRAPH_IMAGE = {
+  url: "/opengraph-image.png",
+  type: "image/png",
+  width: 1200,
+  height: 630,
+  alt: "CineVerse: discover trending movies and save your favorites",
+};
+
+// Metadata for a top-level page, so link previews show the page's own title. The page's
+// `openGraph` replaces the layout's, so it carries the shared fields, description and image.
+export function pageMetadata(title: string): Metadata {
+  return {
+    title,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      title: `${title} | ${SITE_NAME}`,
+      description: SITE_DESCRIPTION,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
+    },
+  };
+}

@@ -6,10 +6,9 @@ import { MovieSection } from "@/components/MovieSection";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResults } from "@/components/SearchResults";
 import { parsePage } from "@/lib/pagination";
+import { pageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Search",
-};
+export const metadata: Metadata = pageMetadata("Search");
 
 export default function SearchPage({ searchParams }: PageProps<"/search">) {
   return (
