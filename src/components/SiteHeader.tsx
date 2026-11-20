@@ -1,11 +1,8 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Container } from "@/components/Container";
-
-const NAV_LINKS = [
-  { href: "/movies", label: "Browse" },
-  { href: "/search", label: "Search" },
-  { href: "/favorites", label: "Favorites" },
-];
+import { CurrentNavLinks } from "@/components/CurrentNavLinks";
+import { NavLinks } from "@/components/NavLinks";
 
 export function SiteHeader() {
   return (
@@ -18,18 +15,9 @@ export function SiteHeader() {
           Cine<span className="text-accent">Verse</span>
         </Link>
         <nav aria-label="Main">
-          <ul className="flex gap-3 sm:gap-6">
-            {NAV_LINKS.map(({ href, label }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="rounded-md text-sm font-medium text-muted transition-colors hover:text-foreground sm:text-base"
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <Suspense fallback={<NavLinks currentPath={null} />}>
+            <CurrentNavLinks />
+          </Suspense>
         </nav>
       </Container>
     </header>
