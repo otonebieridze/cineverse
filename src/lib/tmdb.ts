@@ -21,6 +21,11 @@ const DISCOVER_SORT_BY: Record<SortOption, string> = {
 
 const MIN_VOTE_COUNT = 200;
 
+// TMDB normally answers in well under a second. Without a limit, a request that never
+// answers keeps the page's loading skeleton up until the platform cuts the response off;
+// with it, the request fails and the error page offers "Try again".
+export const TMDB_TIMEOUT_MS = 8_000;
+
 async function tmdbFetch<T>(path: string): Promise<T> {
   const data = await tmdbFetchOrNull<T>(path);
   if (data === null) {
@@ -35,22 +40,33 @@ async function tmdbFetchOrNull<T>(path: string): Promise<T | null> {
     throw new Error("TMDB_ACCESS_TOKEN is not set. See .env.example.");
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-  });
+  try {
+    // The signal also covers reading the body, so a response that stalls midway times out too.
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+      signal: AbortSignal.timeout(TMDB_TIMEOUT_MS),
+    });
 
-  if (response.status === 404) {
-    return null;
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`TMDB request failed: ${response.status} ${path}`);
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      throw new Error(`TMDB request timed out after ${TMDB_TIMEOUT_MS} ms: ${path}`, {
+        cause: error,
+      });
+    }
+    throw error;
   }
-
-  if (!response.ok) {
-    throw new Error(`TMDB request failed: ${response.status} ${path}`);
-  }
-
-  return response.json() as Promise<T>;
 }
 
 export async function getPopularMovies(): Promise<PaginatedResponse<Movie>> {
