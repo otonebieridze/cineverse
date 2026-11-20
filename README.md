@@ -35,6 +35,9 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - Tailwind CSS
 - Zustand (client state)
 - TMDB API (data source)
+- [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) (unit and component tests)
+- [Playwright](https://playwright.dev/) and [axe-core](https://github.com/dequelabs/axe-core) (end-to-end and accessibility tests)
+- [GitHub Actions](https://github.com/features/actions) (CI) and [Vercel](https://vercel.com/) (hosting)
 
 ## Features
 
@@ -42,13 +45,21 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Featured movie hero on the home page
 - [x] Movie details page
 - [x] Cast, trailer and recommendations on movie details
+- [x] Cast row with scroll snapping, arrow buttons and keyboard and swipe support
 - [x] Search with debounced input
 - [x] Genre filtering and pagination
 - [x] Advanced filters: sort, year range, minimum rating, multiple genres (shareable URLs)
 - [x] Favorites (persisted in localStorage)
 - [x] Responsive layout
+- [x] Current page marked in the main navigation (`aria-current`, not color alone)
+- [x] SEO: descriptive titles, meta description and per-page Open Graph tags
+- [x] TMDB requests time out after 8 seconds and show a "Try again" page instead of loading forever
 - [x] Accessibility: skip link and automated axe checks in CI
 - [x] Deployment on Vercel
+
+**Lighthouse** (mobile, live site, median of 3 runs, November 2026): Performance 96–99, Accessibility 100, Best Practices 100, and SEO 100 on every main page except movie details (91).
+
+Movie details scores 91 because Next.js streams its TMDB-based meta description into `<body>`, where Lighthouse doesn't look. Googlebot reads it there, and crawlers that don't run JavaScript get it in `<head>`.
 
 ## Getting Started
 
@@ -117,6 +128,8 @@ npm run test:e2e                  # run all end-to-end tests
 npx playwright test --ui          # step through tests in the interactive UI
 npx playwright show-report        # open the HTML report of the last run
 ```
+
+On every pull request and push to `main`, GitHub Actions runs lint, the unit tests, the production build and the end-to-end tests (including the axe checks) in Chromium, and keeps the Playwright report when a run fails.
 
 ## Deployment
 
