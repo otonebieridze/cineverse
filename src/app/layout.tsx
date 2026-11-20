@@ -4,7 +4,13 @@ import { FavoritesHydrator } from "@/components/FavoritesHydrator";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { MAIN_CONTENT_ID, SkipLink } from "@/components/SkipLink";
-import { SHARED_OPEN_GRAPH, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
+import {
+  SHARED_OPEN_GRAPH,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+} from "@/lib/siteMetadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,13 +21,13 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: SITE_NAME,
+    default: SITE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   openGraph: {
     ...SHARED_OPEN_GRAPH,
-    title: SITE_NAME,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   twitter: {
