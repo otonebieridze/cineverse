@@ -4,8 +4,25 @@ import { expect, test, type Page } from "@playwright/test";
 const TITLE_LENGTH = { min: 50, max: 60 };
 const DESCRIPTION_LENGTH = { min: 120, max: 160 };
 
+const SITE_NAME = "CineVerse";
+
+// Waits for the tag, so it also works for metadata that streams in after the page shell.
 async function metaContent(page: Page, selector: string): Promise<string> {
   return (await page.locator(selector).getAttribute("content")) ?? "";
+}
+
+async function openGraph(page: Page) {
+  const og = (property: string) => metaContent(page, `meta[property="og:${property}"]`);
+
+  return {
+    title: await og("title"),
+    description: await og("description"),
+    siteName: await og("site_name"),
+    image: await og("image"),
+    imageWidth: await og("image:width"),
+    imageHeight: await og("image:height"),
+    imageAlt: await og("image:alt"),
+  };
 }
 
 test.describe("page metadata", () => {
@@ -23,8 +40,11 @@ test.describe("page metadata", () => {
     expect(description.length).toBeGreaterThanOrEqual(DESCRIPTION_LENGTH.min);
     expect(description.length).toBeLessThanOrEqual(DESCRIPTION_LENGTH.max);
 
-    expect(await metaContent(page, 'meta[property="og:title"]')).toBe(title);
-    expect(await metaContent(page, 'meta[property="og:description"]')).toBe(description);
+    const og = await openGraph(page);
+    expect(og.title).toBe(title);
+    expect(og.description).toBe(description);
+    expect(og.siteName).toBe(SITE_NAME);
+    expect(og.image).not.toBe("");
   });
 
   for (const { path, title } of [
@@ -32,17 +52,45 @@ test.describe("page metadata", () => {
     { path: "/search", title: "Search | CineVerse" },
     { path: "/favorites", title: "Favorites | CineVerse" },
   ]) {
-    test(`${path} uses the page title template`, async ({ page }) => {
-      await page.goto(path);
+    test(`${path} has its own title and keeps the shared share-card fields`, async ({
+      page,
+    }) => {
+      await page.goto("/");
+      const home = await openGraph(page);
 
+      await page.goto(path);
       await expect(page).toHaveTitle(title);
+      const og = await openGraph(page);
+
+      expect(og.title).toBe(title);
+      expect(og.description).toBe(home.description);
+      expect(og.siteName).toBe(SITE_NAME);
+      expect(new URL(og.image).pathname).toBe(new URL(home.image).pathname);
+      expect(og.imageWidth).toBe(home.imageWidth);
+      expect(og.imageHeight).toBe(home.imageHeight);
+      expect(og.imageAlt).toBe(home.imageAlt);
     });
   }
 
-  test("a movie page is titled after the movie", async ({ page }) => {
+  test("the shared share image is served at its plain URL", async ({ page, request }) => {
+    await page.goto("/movies");
+    const { pathname } = new URL((await openGraph(page)).image);
+
+    const response = await request.get(pathname);
+
+    expect(response.ok()).toBe(true);
+    expect(response.headers()["content-type"]).toBe("image/png");
+  });
+
+  test("a movie page has the movie's title, description and image", async ({ page }) => {
     await page.goto("/movie/550");
     const movieTitle = await page.getByRole("heading", { level: 1 }).textContent();
 
     await expect(page).toHaveTitle(`${movieTitle} | CineVerse`);
+    const og = await openGraph(page);
+    expect(og.title).toBe(movieTitle);
+    expect(og.description).not.toBe("");
+    expect(og.siteName).toBe(SITE_NAME);
+    expect(og.image).toContain("image.tmdb.org");
   });
 });

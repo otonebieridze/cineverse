@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { FavoritesList } from "@/components/FavoritesList";
+import { pageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Favorites",
-};
+export const metadata: Metadata = pageMetadata("Favorites");
 
 export default function FavoritesPage() {
   return (

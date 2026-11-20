@@ -5,10 +5,9 @@ import { Container } from "@/components/Container";
 import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
 import { getCurrentYear, parseBrowseFilters } from "@/lib/browseFilters";
 import { parsePage } from "@/lib/pagination";
+import { pageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Browse",
-};
+export const metadata: Metadata = pageMetadata("Browse");
 
 export default function MoviesPage({ searchParams }: PageProps<"/movies">) {
   return (
