@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CardLink } from "@/components/CardLink";
 import { MovieSection } from "@/components/MovieSection";
 import { ScrollRow } from "@/components/ScrollRow";
 import { getImageUrl } from "@/lib/images";
@@ -25,7 +26,7 @@ export async function CastList({ creditsPromise }: CastListProps) {
           const photoUrl = getImageUrl(member.profile_path, "w185");
 
           return (
-            <li key={member.credit_id} className="w-28 shrink-0 sm:w-32">
+            <li key={member.credit_id} className="group relative w-28 shrink-0 sm:w-32">
               <div className="relative aspect-2/3 overflow-hidden rounded-card bg-surface shadow-card">
                 {photoUrl ? (
                   <Image
@@ -33,7 +34,7 @@ export async function CastList({ creditsPromise }: CastListProps) {
                     alt={`Photo of ${member.name}`}
                     fill
                     sizes="(min-width: 640px) 8rem, 7rem"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
                   />
                 ) : (
                   <div
@@ -44,8 +45,8 @@ export async function CastList({ creditsPromise }: CastListProps) {
                   </div>
                 )}
               </div>
-              <p className="mt-3 line-clamp-2 text-sm font-semibold leading-snug">
-                {member.name}
+              <p className="mt-3 line-clamp-2 text-sm font-semibold leading-snug transition-colors group-hover:text-accent">
+                <CardLink href={`/person/${member.id}`}>{member.name}</CardLink>
               </p>
               {member.character && (
                 <p className="mt-1 line-clamp-2 text-sm text-muted">{member.character}</p>

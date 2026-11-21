@@ -46,4 +46,27 @@ test.describe("top cast row", () => {
 
     await expect(region).toHaveCSS("scrollbar-width", "none");
   });
+
+  test("opens the actor page when a cast card is clicked anywhere", async ({ page }) => {
+    const { region } = await openCastRow(page);
+    const firstCard = region.getByRole("listitem").first();
+    const name = await firstCard.getByRole("link").textContent();
+
+    await firstCard.click();
+
+    await expect(page).toHaveURL(/\/person\/\d+$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(name ?? "");
+  });
+
+  test("opens the actor page with the keyboard", async ({ page }) => {
+    const { region } = await openCastRow(page);
+    const firstLink = region.getByRole("link").first();
+
+    await region.focus();
+    await page.keyboard.press("Tab");
+    await expect(firstLink).toBeFocused();
+    await page.keyboard.press("Enter");
+
+    await expect(page).toHaveURL(/\/person\/\d+$/);
+  });
 });
