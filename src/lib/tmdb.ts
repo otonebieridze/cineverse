@@ -1,13 +1,15 @@
 import "server-only";
 import { cacheLife } from "next/cache";
 import type { BrowseFilters, SortOption } from "@/lib/browseFilters";
-import { isValidMovieId } from "@/lib/movieId";
+import { isValidTmdbId } from "@/lib/tmdbId";
 import type {
   GenreListResponse,
   Movie,
   MovieCredits,
   MovieDetails,
   PaginatedResponse,
+  PersonDetails,
+  PersonMovieCredits,
   VideoListResponse,
 } from "@/types/tmdb";
 
@@ -138,7 +140,7 @@ export async function searchMovies(
 export async function getMovieDetails(id: string): Promise<MovieDetails | null> {
   "use cache";
   cacheLife("days");
-  if (!isValidMovieId(id)) {
+  if (!isValidTmdbId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}`);
@@ -147,7 +149,7 @@ export async function getMovieDetails(id: string): Promise<MovieDetails | null> 
 export async function getMovieCredits(id: string): Promise<MovieCredits | null> {
   "use cache";
   cacheLife("days");
-  if (!isValidMovieId(id)) {
+  if (!isValidTmdbId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/credits`);
@@ -156,7 +158,7 @@ export async function getMovieCredits(id: string): Promise<MovieCredits | null> 
 export async function getMovieVideos(id: string): Promise<VideoListResponse | null> {
   "use cache";
   cacheLife("days");
-  if (!isValidMovieId(id)) {
+  if (!isValidTmdbId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/videos`);
@@ -167,8 +169,26 @@ export async function getMovieRecommendations(
 ): Promise<PaginatedResponse<Movie> | null> {
   "use cache";
   cacheLife("hours");
-  if (!isValidMovieId(id)) {
+  if (!isValidTmdbId(id)) {
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/recommendations`);
+}
+
+export async function getPersonDetails(id: string): Promise<PersonDetails | null> {
+  "use cache";
+  cacheLife("days");
+  if (!isValidTmdbId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/person/${id}`);
+}
+
+export async function getPersonMovieCredits(id: string): Promise<PersonMovieCredits | null> {
+  "use cache";
+  cacheLife("days");
+  if (!isValidTmdbId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/person/${id}/movie_credits`);
 }

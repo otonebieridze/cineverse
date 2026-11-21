@@ -91,7 +91,7 @@ export function ScrollRow({ label, children }: ScrollRowProps) {
         role="region"
         aria-label={`${label}, scrollable`}
         tabIndex={0}
-        className={`-mx-4 snap-x snap-mandatory scroll-px-4 overflow-x-auto overscroll-x-contain px-4 pb-2 scrollbar-none sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8 ${fadeClassName}`}
+        className={`-mx-4 -mt-2 snap-x snap-mandatory scroll-px-4 overflow-x-auto overscroll-x-contain px-4 py-2 scrollbar-none sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8 ${fadeClassName}`}
       >
         <ul className="flex w-max gap-4 *:snap-start sm:gap-6">{children}</ul>
       </div>

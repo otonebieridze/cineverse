@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { CardLink } from "@/components/CardLink";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { getImageUrl } from "@/lib/images";
 import { toMovieSummary } from "@/lib/movies";
@@ -39,12 +39,7 @@ export function MovieCard({ movie, loading, fetchPriority }: MovieCardProps) {
         </div>
       </div>
       <h3 className="mt-3 line-clamp-2 font-semibold leading-snug transition-colors group-hover:text-accent">
-        <Link
-          href={`/movie/${movie.id}`}
-          className="outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-accent"
-        >
-          {movie.title}
-        </Link>
+        <CardLink href={`/movie/${movie.id}`}>{movie.title}</CardLink>
       </h3>
       <p className="mt-1 flex gap-2 text-sm text-muted">
         {year && <span>{year}</span>}

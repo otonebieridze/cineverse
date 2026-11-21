@@ -46,6 +46,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Movie details page
 - [x] Cast, trailer and recommendations on movie details
 - [x] Cast row with scroll snapping, arrow buttons and keyboard and swipe support
+- [x] Actor pages with photo, biography and known-for movies, linked from the cast row
 - [x] Search with debounced input
 - [x] Genre filtering and pagination
 - [x] Advanced filters: sort, year range, minimum rating, multiple genres (shareable URLs)

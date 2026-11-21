@@ -24,4 +24,18 @@ test.describe("not found pages", () => {
     await expect(page).toHaveTitle("Movie not found | CineVerse");
     await expect(page.getByRole("heading", { level: 1, name: "Movie not found" })).toBeVisible();
   });
+
+  for (const { reason, path } of [
+    { reason: "an invalid person id", path: "/person/not-a-number" },
+    { reason: "a person TMDB doesn't know", path: "/person/999999999" },
+  ]) {
+    test(`shows the person not found page for ${reason}`, async ({ page }) => {
+      await page.goto(path);
+
+      await expect(page).toHaveTitle("Person not found | CineVerse");
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Person not found" }),
+      ).toBeVisible();
+    });
+  }
 });
