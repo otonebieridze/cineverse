@@ -9,6 +9,7 @@ import type {
   MovieDetails,
   PaginatedResponse,
   PersonDetails,
+  PersonMovieCredits,
   VideoListResponse,
 } from "@/types/tmdb";
 
@@ -181,4 +182,13 @@ export async function getPersonDetails(id: string): Promise<PersonDetails | null
     return null;
   }
   return tmdbFetchOrNull(`/person/${id}`);
+}
+
+export async function getPersonMovieCredits(id: string): Promise<PersonMovieCredits | null> {
+  "use cache";
+  cacheLife("days");
+  if (!isValidTmdbId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/person/${id}/movie_credits`);
 }

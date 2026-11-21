@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { Container } from "@/components/Container";
+import { KnownForMovies } from "@/components/KnownForMovies";
+import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
 import { PersonDetails } from "@/components/PersonDetails";
 import { getImageUrl } from "@/lib/images";
 import {
@@ -8,7 +12,7 @@ import {
   SITE_DESCRIPTION,
 } from "@/lib/siteMetadata";
 import { shortenText } from "@/lib/text";
-import { getPersonDetails } from "@/lib/tmdb";
+import { getPersonDetails, getPersonMovieCredits } from "@/lib/tmdb";
 
 // Search results and link previews show about 160 characters of a description.
 const DESCRIPTION_MAX_LENGTH = 160;
@@ -49,11 +53,23 @@ export async function generateMetadata({
 
 export default async function PersonPage({ params }: PageProps<"/person/[id]">) {
   const { id } = await params;
+  // Started before awaiting the details so both requests run in parallel. A failure only
+  // hides the "Known for" section instead of the whole page.
+  const creditsPromise = getPersonMovieCredits(id).catch(() => null);
   const person = await getPersonDetails(id);
 
   if (!person) {
     notFound();
   }
 
-  return <PersonDetails person={person} />;
+  return (
+    <>
+      <PersonDetails person={person} />
+      <Container className="pb-12 sm:pb-16">
+        <Suspense fallback={<MovieGridSkeleton />}>
+          <KnownForMovies creditsPromise={creditsPromise} />
+        </Suspense>
+      </Container>
+    </>
+  );
 }

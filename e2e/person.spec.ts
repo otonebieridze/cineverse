@@ -16,4 +16,13 @@ test.describe("actor page", () => {
     await expect(page.getByRole("definition").first()).toHaveText(/^[A-Z][a-z]+ \d{1,2}, \d{4}$/);
     await expect(page.getByRole("heading", { level: 2, name: "Biography" })).toBeVisible();
   });
+
+  test("lists the movies the person is known for", async ({ page }) => {
+    await page.goto(PERSON_PATH);
+
+    const knownFor = page.getByRole("region", { name: "Known for" });
+    const firstMovie = knownFor.getByRole("article").first();
+    await expect(firstMovie).toBeVisible();
+    await expect(firstMovie.getByRole("link")).toHaveAttribute("href", /^\/movie\/\d+$/);
+  });
 });
