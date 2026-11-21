@@ -47,6 +47,16 @@ export type MovieCredits = {
   cast: CastMember[];
 };
 
+export type PersonDetails = {
+  id: number;
+  name: string;
+  biography: string;
+  birthday: string | null;
+  deathday: string | null;
+  place_of_birth: string | null;
+  profile_path: string | null;
+};
+
 export type Video = {
   id: string;
   key: string;

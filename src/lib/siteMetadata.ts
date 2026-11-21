@@ -20,7 +20,7 @@ export const SHARED_OPEN_GRAPH = {
 // The default share image from `src/app/opengraph-image.png`. Next.js only adds that file
 // to pages that don't set their own `openGraph`, so pages that do must list it themselves.
 // Keep in sync with the file and `opengraph-image.alt.txt` (checked in e2e/metadata.spec.ts).
-const DEFAULT_OPEN_GRAPH_IMAGE = {
+export const DEFAULT_OPEN_GRAPH_IMAGE = {
   url: "/opengraph-image.png",
   type: "image/png",
   width: 1200,

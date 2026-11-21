@@ -31,6 +31,8 @@ const PAGES = [
   { name: "browse with the filters panel open", path: "/movies?sort=rating&rating=7" },
   { name: "search results", path: "/search?q=Inception" },
   { name: "404 page", path: "/this-page-does-not-exist" },
+  { name: "person details", path: "/person/287" },
+  { name: "person not found", path: "/person/not-a-number" },
 ];
 
 test.describe("accessibility", () => {

@@ -18,6 +18,7 @@ async function openGraph(page: Page) {
     title: await og("title"),
     description: await og("description"),
     siteName: await og("site_name"),
+    type: await og("type"),
     image: await og("image"),
     imageWidth: await og("image:width"),
     imageHeight: await og("image:height"),
@@ -92,5 +93,27 @@ test.describe("page metadata", () => {
     expect(og.description).not.toBe("");
     expect(og.siteName).toBe(SITE_NAME);
     expect(og.image).toContain("image.tmdb.org");
+  });
+
+  // The page's `openGraph` replaces the layout's whole object, so every shared field
+  // has to be set again by the page.
+  test("a person page has the person's name, biography, photo and profile type", async ({
+    page,
+  }) => {
+    await page.goto("/person/287");
+    const name = await page.getByRole("heading", { level: 1 }).textContent();
+
+    await expect(page).toHaveTitle(`${name} | CineVerse`);
+    const description = await metaContent(page, 'meta[name="description"]');
+    expect(description).not.toBe("");
+    expect(description.length).toBeLessThanOrEqual(DESCRIPTION_LENGTH.max);
+
+    const og = await openGraph(page);
+    expect(og.title).toBe(name);
+    expect(og.description).toBe(description);
+    expect(og.siteName).toBe(SITE_NAME);
+    expect(og.type).toBe("profile");
+    expect(og.image).toContain("image.tmdb.org");
+    expect(og.imageAlt).toBe(`Photo of ${name}`);
   });
 });
