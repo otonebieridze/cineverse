@@ -11,6 +11,7 @@ import type {
   PersonDetails,
   PersonMovieCredits,
   VideoListResponse,
+  WatchProvidersResponse,
 } from "@/types/tmdb";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -173,6 +174,18 @@ export async function getMovieRecommendations(
     return null;
   }
   return tmdbFetchOrNull(`/movie/${id}/recommendations`);
+}
+
+// Availability changes more often than movie details, so this refreshes hourly.
+export async function getMovieWatchProviders(
+  id: string,
+): Promise<WatchProvidersResponse | null> {
+  "use cache";
+  cacheLife("hours");
+  if (!isValidTmdbId(id)) {
+    return null;
+  }
+  return tmdbFetchOrNull(`/movie/${id}/watch/providers`);
 }
 
 export async function getPersonDetails(id: string): Promise<PersonDetails | null> {
