@@ -9,6 +9,8 @@ import { MovieGridSkeleton } from "@/components/MovieGridSkeleton";
 import { RecommendedMovies } from "@/components/RecommendedMovies";
 import { TrailerSection } from "@/components/TrailerSection";
 import { TrailerSectionSkeleton } from "@/components/TrailerSectionSkeleton";
+import { WatchProvidersSection } from "@/components/WatchProvidersSection";
+import { WatchProvidersSkeleton } from "@/components/WatchProvidersSkeleton";
 import { getImageUrl } from "@/lib/images";
 import { SHARED_OPEN_GRAPH } from "@/lib/siteMetadata";
 import {
@@ -16,6 +18,7 @@ import {
   getMovieDetails,
   getMovieRecommendations,
   getMovieVideos,
+  getMovieWatchProviders,
 } from "@/lib/tmdb";
 
 export async function generateMetadata({
@@ -51,6 +54,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
   const creditsPromise = getMovieCredits(id).catch(() => null);
   const videosPromise = getMovieVideos(id).catch(() => null);
   const recommendationsPromise = getMovieRecommendations(id).catch(() => null);
+  const watchProvidersPromise = getMovieWatchProviders(id).catch(() => null);
   const movie = await getMovieDetails(id);
 
   if (!movie) {
@@ -67,6 +71,9 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
             movieTitle={movie.title}
             backdropPath={movie.backdrop_path}
           />
+        </Suspense>
+        <Suspense fallback={<WatchProvidersSkeleton fullSection />}>
+          <WatchProvidersSection providersPromise={watchProvidersPromise} />
         </Suspense>
         <Suspense fallback={<CastListSkeleton />}>
           <CastList creditsPromise={creditsPromise} />

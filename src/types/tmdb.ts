@@ -81,3 +81,26 @@ export type Video = {
 export type VideoListResponse = {
   results: Video[];
 };
+
+export type WatchProvider = {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string | null;
+  display_priority: number;
+};
+
+// TMDB leaves out a list when a country has no providers of that kind.
+export type WatchProviderCountry = {
+  link: string;
+  flatrate?: WatchProvider[];
+  free?: WatchProvider[];
+  ads?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
+};
+
+export type WatchProvidersResponse = {
+  id: number;
+  // Keyed by ISO 3166-1 country code, e.g. "US".
+  results: Record<string, WatchProviderCountry>;
+};
