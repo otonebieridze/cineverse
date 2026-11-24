@@ -45,6 +45,7 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 - [x] Featured movie hero on the home page
 - [x] Movie details page
 - [x] Cast, trailer and recommendations on movie details
+- [x] Where to watch: stream, free, rent and buy options per country, with the chosen country remembered in the browser
 - [x] Cast row with scroll snapping, arrow buttons and keyboard and swipe support
 - [x] Actor pages with photo, biography and known-for movies, linked from the cast row
 - [x] Search with debounced input
@@ -150,3 +151,5 @@ The app is deployed on [Vercel](https://vercel.com/):
 ## Acknowledgements
 
 This product uses the TMDB API but is not endorsed or certified by [TMDB](https://www.themoviedb.org/).
+
+Streaming availability data by [JustWatch](https://www.justwatch.com/).

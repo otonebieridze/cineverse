@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findWatchRegion, toWatchRegions, type WatchRegion } from "@/lib/watchProviders";
+import { findWatchRegion, toWatchProviderData, type WatchRegion } from "@/lib/watchProviders";
 import type { WatchProvider, WatchProviderCountry } from "@/types/tmdb";
 
 function provider(id: number, displayPriority: number, name = `Provider ${id}`): WatchProvider {
@@ -15,106 +15,116 @@ function country(lists: Omit<WatchProviderCountry, "link"> = {}): WatchProviderC
   return { link: "https://www.themoviedb.org/movie/1/watch?locale=US", ...lists };
 }
 
-function regionsFor(results: Record<string, WatchProviderCountry>) {
-  return toWatchRegions({ id: 1, results });
+function dataFor(results: Record<string, WatchProviderCountry>) {
+  return toWatchProviderData({ id: 1, results });
 }
 
-function labels(region: WatchRegion | undefined) {
+function usRegion(lists: Omit<WatchProviderCountry, "link">) {
+  return findWatchRegion(dataFor({ US: country(lists) }), "US");
+}
+
+function labels(region: WatchRegion | null) {
   return region?.groups.map(({ label }) => label);
 }
 
-function providerIds(region: WatchRegion | undefined, label: string) {
+function providerIds(region: WatchRegion | null, label: string) {
   return region?.groups
     .find((group) => group.label === label)
     ?.providers.map(({ provider_id }) => provider_id);
 }
 
-describe("toWatchRegions", () => {
+describe("watch provider data", () => {
   it("orders the groups Stream, Free, Rent, Buy", () => {
-    const { US } = regionsFor({
-      US: country({
-        buy: [provider(1, 1)],
-        rent: [provider(2, 1)],
-        ads: [provider(3, 1)],
-        flatrate: [provider(4, 1)],
-      }),
+    const region = usRegion({
+      buy: [provider(1, 1)],
+      rent: [provider(2, 1)],
+      ads: [provider(3, 1)],
+      flatrate: [provider(4, 1)],
     });
 
-    expect(labels(US)).toEqual(["Stream", "Free", "Rent", "Buy"]);
+    expect(labels(region)).toEqual(["Stream", "Free", "Rent", "Buy"]);
   });
 
   it("sorts providers by display priority", () => {
-    const { US } = regionsFor({
-      US: country({ flatrate: [provider(1, 30), provider(2, 2), provider(3, 15)] }),
-    });
+    const region = usRegion({ flatrate: [provider(1, 30), provider(2, 2), provider(3, 15)] });
 
-    expect(providerIds(US, "Stream")).toEqual([2, 3, 1]);
+    expect(providerIds(region, "Stream")).toEqual([2, 3, 1]);
   });
 
   it("sorts providers with the same priority by name", () => {
-    const { US } = regionsFor({
-      US: country({ flatrate: [provider(1, 5, "Zeta"), provider(2, 5, "Alpha")] }),
-    });
+    const region = usRegion({ flatrate: [provider(1, 5, "Zeta"), provider(2, 5, "Alpha")] });
 
-    expect(providerIds(US, "Stream")).toEqual([2, 1]);
+    expect(providerIds(region, "Stream")).toEqual([2, 1]);
   });
 
   it("leaves out groups without providers", () => {
-    const { US } = regionsFor({ US: country({ rent: [provider(1, 1)], buy: [] }) });
+    const region = usRegion({ rent: [provider(1, 1)], buy: [] });
 
-    expect(labels(US)).toEqual(["Rent"]);
+    expect(labels(region)).toEqual(["Rent"]);
   });
 
   it("merges free and ad-supported providers into Free, listing each provider once", () => {
-    const { US } = regionsFor({
-      US: country({ free: [provider(1, 3), provider(2, 9)], ads: [provider(3, 1), provider(2, 9)] }),
+    const region = usRegion({
+      free: [provider(1, 3), provider(2, 9)],
+      ads: [provider(3, 1), provider(2, 9)],
     });
 
-    expect(providerIds(US, "Free")).toEqual([3, 1, 2]);
+    expect(providerIds(region, "Free")).toEqual([3, 1, 2]);
   });
 
   it("keeps only the fields the page shows", () => {
-    const { US } = regionsFor({ US: country({ flatrate: [provider(1, 1, "Netflix")] }) });
+    const region = usRegion({ flatrate: [provider(1, 1, "Netflix")] });
 
-    expect(US?.groups[0].providers).toEqual([
+    expect(region?.groups[0].providers).toEqual([
       { provider_id: 1, provider_name: "Netflix", logo_path: "/logo-1.jpg" },
     ]);
   });
 
   it("keeps TMDB's watch page link for each country", () => {
-    const { DE } = regionsFor({
-      DE: {
-        link: "https://www.themoviedb.org/movie/1/watch?locale=DE",
-        buy: [provider(1, 1)],
-      },
+    const data = dataFor({
+      US: country({ buy: [provider(1, 1)] }),
+      DE: { link: "https://www.themoviedb.org/movie/1/watch?locale=DE", buy: [provider(1, 1)] },
     });
 
-    expect(DE?.link).toBe("https://www.themoviedb.org/movie/1/watch?locale=DE");
+    expect(findWatchRegion(data, "DE")?.link).toBe(
+      "https://www.themoviedb.org/movie/1/watch?locale=DE",
+    );
+  });
+
+  // A popular movie lists the same providers in over a hundred countries.
+  it("stores each provider's details once, however many countries list it", () => {
+    const data = dataFor({
+      US: country({ flatrate: [provider(1, 1)] }),
+      DE: country({ flatrate: [provider(1, 1)], buy: [provider(1, 1)] }),
+    });
+
+    expect(Object.keys(data.providers)).toEqual(["1"]);
+    expect(providerIds(findWatchRegion(data, "DE"), "Buy")).toEqual([1]);
   });
 
   it("leaves out countries without any providers", () => {
-    const regions = regionsFor({ US: country({ buy: [provider(1, 1)] }), GE: country() });
+    const data = dataFor({ US: country({ buy: [provider(1, 1)] }), GE: country() });
 
-    expect(Object.keys(regions)).toEqual(["US"]);
+    expect(Object.keys(data.regions)).toEqual(["US"]);
   });
 
-  it("returns no countries when the movie has no streaming information", () => {
-    expect(regionsFor({})).toEqual({});
+  it("has no countries when the movie has no streaming information", () => {
+    expect(dataFor({}).regions).toEqual({});
   });
 });
 
 describe("findWatchRegion", () => {
-  const regions = regionsFor({ US: country({ buy: [provider(1, 1)] }) });
+  const data = dataFor({ US: country({ buy: [provider(1, 1)] }) });
 
   it("returns the chosen country's providers", () => {
-    expect(labels(findWatchRegion(regions, "US") ?? undefined)).toEqual(["Buy"]);
+    expect(labels(findWatchRegion(data, "US"))).toEqual(["Buy"]);
   });
 
   it("returns null for a country without streaming information", () => {
-    expect(findWatchRegion(regions, "GE")).toBeNull();
+    expect(findWatchRegion(data, "GE")).toBeNull();
   });
 
   it("ignores codes that only match built-in object properties", () => {
-    expect(findWatchRegion(regions, "constructor")).toBeNull();
+    expect(findWatchRegion(data, "constructor")).toBeNull();
   });
 });

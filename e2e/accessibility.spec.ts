@@ -84,6 +84,31 @@ test.describe("accessibility", () => {
     await expectNoAccessibilityViolations(page);
   });
 
+  test("movie details where to watch has no accessibility violations", async ({ page }) => {
+    await page.goto("/movie/550");
+    await waitForContent(page);
+    const section = page.getByRole("region", { name: "Where to watch" });
+    await expect(section.getByRole("combobox", { name: "Country" })).toBeVisible();
+
+    await expectNoAccessibilityViolations(page);
+  });
+
+  test("where to watch without streaming information has no accessibility violations", async ({
+    page,
+  }) => {
+    // A saved country that never has streaming data shows the empty state.
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "cineverse-watch-region",
+        JSON.stringify({ state: { region: "AQ" }, version: 0 }),
+      );
+    });
+    await page.goto("/movie/550");
+    await expect(page.getByText("No streaming information for Antarctica.")).toBeVisible();
+
+    await expectNoAccessibilityViolations(page);
+  });
+
   test("the first Tab reveals a skip link that jumps to the main content", async ({ page }) => {
     // Wait for streamed content: until it arrives, <main> has nothing to focus and the
     // next Tab after the jump would land in the footer.

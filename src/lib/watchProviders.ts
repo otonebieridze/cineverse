@@ -12,7 +12,7 @@ export const WATCH_GROUPS = [
 
 export type WatchGroupLabel = (typeof WATCH_GROUPS)[number]["label"];
 
-// Only the fields the page renders, so the client receives as little as possible.
+// Only the fields the page renders.
 export type WatchProviderSummary = Pick<
   WatchProvider,
   "provider_id" | "provider_name" | "logo_path"
@@ -29,12 +29,18 @@ export type WatchRegion = {
   groups: WatchGroup[];
 };
 
-export type WatchRegions = Record<string, WatchRegion>;
+export type WatchProviderData = {
+  providers: Record<number, WatchProviderSummary>;
+  regions: Record<
+    string,
+    { link: string; groups: Partial<Record<WatchGroupLabel, number[]>> }
+  >;
+};
 
-function toGroupProviders(
+function sortedProviders(
   country: WatchProviderCountry,
   keys: readonly ProviderListKey[],
-): WatchProviderSummary[] {
+): WatchProvider[] {
   const seen = new Set<number>();
   const providers = keys
     .flatMap((key) => country[key] ?? [])
@@ -46,32 +52,49 @@ function toGroupProviders(
       return true;
     });
 
-  return providers
-    .toSorted(
-      (a, b) =>
-        a.display_priority - b.display_priority || a.provider_name.localeCompare(b.provider_name),
-    )
-    .map(({ provider_id, provider_name, logo_path }) => ({ provider_id, provider_name, logo_path }));
+  return providers.toSorted(
+    (a, b) =>
+      a.display_priority - b.display_priority || a.provider_name.localeCompare(b.provider_name),
+  );
 }
 
-export function toWatchRegions(response: WatchProvidersResponse): WatchRegions {
-  const regions: WatchRegions = {};
+export function toWatchProviderData(response: WatchProvidersResponse): WatchProviderData {
+  const data: WatchProviderData = { providers: {}, regions: {} };
 
   for (const [code, country] of Object.entries(response.results)) {
-    const groups = WATCH_GROUPS.map(({ label, keys }) => ({
-      label,
-      providers: toGroupProviders(country, keys),
-    })).filter(({ providers }) => providers.length > 0);
+    const groups: Partial<Record<WatchGroupLabel, number[]>> = {};
 
-    if (groups.length > 0) {
-      regions[code] = { link: country.link, groups };
+    for (const { label, keys } of WATCH_GROUPS) {
+      const providers = sortedProviders(country, keys);
+      if (providers.length === 0) {
+        continue;
+      }
+      groups[label] = providers.map(({ provider_id, provider_name, logo_path }) => {
+        data.providers[provider_id] = { provider_id, provider_name, logo_path };
+        return provider_id;
+      });
+    }
+
+    if (Object.keys(groups).length > 0) {
+      data.regions[code] = { link: country.link, groups };
     }
   }
 
-  return regions;
+  return data;
 }
 
 // The code can come from localStorage, so only the countries themselves count as a match.
-export function findWatchRegion(regions: WatchRegions, code: string): WatchRegion | null {
-  return Object.hasOwn(regions, code) ? regions[code] : null;
+export function findWatchRegion(data: WatchProviderData, code: string): WatchRegion | null {
+  if (!Object.hasOwn(data.regions, code)) {
+    return null;
+  }
+
+  const { link, groups } = data.regions[code];
+  return {
+    link,
+    groups: WATCH_GROUPS.flatMap(({ label }) => {
+      const ids = groups[label];
+      return ids ? [{ label, providers: ids.map((id) => data.providers[id]) }] : [];
+    }),
+  };
 }
