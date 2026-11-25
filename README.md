@@ -2,31 +2,16 @@
 
 [![CI](https://github.com/otonebieridze/cineverse/actions/workflows/ci.yml/badge.svg)](https://github.com/otonebieridze/cineverse/actions/workflows/ci.yml)
 
-A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse popular and trending movies, search, filter and sort, view details, and save favorites.
+A movie discovery app built with Next.js and the [TMDB API](https://www.themoviedb.org/documentation/api). Browse trending movies, search and filter, see where to watch, explore actors, and save favorites.
 
 **Live demo:** [cineverse-three-eta.vercel.app](https://cineverse-three-eta.vercel.app/)
 
-## Screenshots
+## Highlights
 
-![Home page with a featured movie hero banner above trending movies](docs/screenshots/home.webp)
-
-*Home: featured hero banner*
-
-![Browse page with Crime and Thriller selected and the filters panel open](docs/screenshots/browse.webp)
-
-*Browse: sort, year range, minimum rating and multi-genre filters*
-
-![Movie details page with trailer preview and cast list](docs/screenshots/details.webp)
-
-*Details: click-to-load trailer, cast and recommendations*
-
-![Favorites page with saved movies](docs/screenshots/favorites.webp)
-
-*Favorites: saved movies, persisted in the browser*
-
-<img src="docs/screenshots/mobile.webp" alt="Home page on a phone with the featured hero banner" width="260">
-
-*Mobile: responsive layout with the hero banner*
+- **Server-first.** All TMDB requests run on the server with per-endpoint caching, so the API token never reaches the browser.
+- **Accessible.** Lighthouse accessibility score of 100 on every main page, and automated axe checks in CI.
+- **Tested.** Unit, component and end-to-end tests run in GitHub Actions on every pull request.
+- **Fast.** Lighthouse performance between 97 and 99 on every main page (mobile, live site, median of 3 runs, November 2026).
 
 ## Tech Stack
 
@@ -41,27 +26,28 @@ A movie discovery app built with Next.js and the [TMDB API](https://www.themovie
 
 ## Features
 
-- [x] Popular and trending movies
-- [x] Featured movie hero on the home page
-- [x] Movie details page
-- [x] Cast, trailer and recommendations on movie details
-- [x] Where to watch: stream, free, rent and buy options per country, with the chosen country remembered in the browser
-- [x] Cast row with scroll snapping, arrow buttons and keyboard and swipe support
-- [x] Actor pages with photo, biography and known-for movies, linked from the cast row
-- [x] Search with debounced input
-- [x] Genre filtering and pagination
-- [x] Advanced filters: sort, year range, minimum rating, multiple genres (shareable URLs)
-- [x] Favorites (persisted in localStorage)
-- [x] Responsive layout
-- [x] Current page marked in the main navigation (`aria-current`, not color alone)
-- [x] SEO: descriptive titles, meta description and per-page Open Graph tags
-- [x] TMDB requests time out after 8 seconds and show a "Try again" page instead of loading forever
-- [x] Accessibility: skip link and automated axe checks in CI
-- [x] Deployment on Vercel
+**Discover**
 
-**Lighthouse** (mobile, live site, median of 3 runs, November 2026): Performance 96–99, Accessibility 100, Best Practices 100, and SEO 100 on every main page except movie details (91).
+- Popular and trending movies, with a featured hero on the home page
+- Search with debounced input
+- Browse with multi-genre filters, sort, year range, minimum rating and pagination, all kept in shareable URLs
 
-Movie details scores 91 because Next.js streams its TMDB-based meta description into `<body>`, where Lighthouse doesn't look. Googlebot reads it there, and crawlers that don't run JavaScript get it in `<head>`.
+**Details**
+
+- Movie details with a click-to-load trailer, cast and recommendations
+- Where to watch: stream, free, rent and buy options per country, with the chosen country remembered in the browser
+- Cast row with scroll snapping, arrow buttons, and keyboard and swipe support
+- Actor pages with photo, biography and known-for movies, linked from the cast row
+
+**Personal**
+
+- Favorites saved in the browser (localStorage)
+
+**Quality**
+
+- Accessibility: skip link, current page marked in the navigation (`aria-current`, not color alone), keyboard-accessible cast row, and automated axe checks in CI
+- SEO: descriptive titles, meta descriptions and per-page Open Graph tags
+- Responsive layout
 
 ## Getting Started
 
@@ -86,8 +72,8 @@ Copy the example file and add your token:
 cp .env.example .env.local
 ```
 
-| Variable           | Description                          |
-| ------------------ | ------------------------------------ |
+| Variable            | Description                              |
+| ------------------- | ---------------------------------------- |
 | `TMDB_ACCESS_TOKEN` | TMDB API Read Access Token (server-only) |
 
 ### Run the app
@@ -144,8 +130,11 @@ The app is deployed on [Vercel](https://vercel.com/):
 ## Architecture Notes
 
 - **Server-side data fetching.** All TMDB requests run on the server, so the access token is never exposed to the browser (no `NEXT_PUBLIC_` prefix).
-- **Caching.** TMDB requests are cached with the `"use cache"` directive and a `cacheLife` profile chosen per endpoint (hours for lists and search, days for movie details, weeks for genres) to keep navigation fast and reduce API calls.
-- **Server Components by default.** `"use client"` is used only for interactive parts such as search, filters, and favorites.
+- **Caching.** TMDB requests are cached with the `"use cache"` directive and a `cacheLife` profile chosen per endpoint to keep navigation fast and reduce API calls: hours for movie lists, search, recommendations and watch providers; days for movie details, credits and videos and for actor details and credits; weeks for the genre list.
+- **Server Components by default.** `"use client"` is used only where the browser is needed: the search input, favorites, the cast row's scroll controls, the trailer player, the Where to watch country picker, the navigation's current-page marker and the error page. The browse filters are server-rendered links and a `next/form` form.
+- **Where to watch without losing caching.** Streaming data for all countries is fetched once per movie and cached. The visitor's country is chosen in the browser (their saved choice, or else their browser language), so nothing on the server reads cookies or headers and the page stays fully cacheable.
+- **SEO note.** On movie and actor pages, Next.js streams the meta description into `<body>`, so Lighthouse scores SEO 91 there instead of 100. According to the Next.js docs, Googlebot reads it; link-preview crawlers such as Facebook's receive it in `<head>`.
+- **Request timeouts.** TMDB requests time out after 8 seconds. If a page's main request fails, a "Try again" screen is shown; optional sections on the movie page, such as cast, trailers and Where to watch, are left out instead.
 - **Click-to-load trailers.** The details page shows a lightweight preview with a play button. The privacy-enhanced YouTube embed (`youtube-nocookie.com`) loads only after the user presses play.
 
 ## Acknowledgements
